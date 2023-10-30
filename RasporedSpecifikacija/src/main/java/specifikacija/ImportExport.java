@@ -1,10 +1,12 @@
 package specifikacija;
 
+import klase.Raspored;
+
 public abstract class ImportExport {
 
-    public abstract void  ucitajRasporedJson(String fileName);
+    public abstract Raspored ucitajRasporedJson(String fileName);
 
-    public abstract void ucitajRasporedCsv(String fileName);
+    public abstract Raspored ucitajRasporedCsv(String fileName);
 
     public abstract void upisiRasporedUJson(String fileName,String path);
 
