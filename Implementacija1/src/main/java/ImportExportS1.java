@@ -1,14 +1,19 @@
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
 import specifikacija.ImportExport;
+import specifikacija.LocalDateTimeTypeAdapter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ImportExportS1 extends ImportExport {
@@ -16,14 +21,12 @@ public class ImportExportS1 extends ImportExport {
     @Override
     public Raspored ucitajRasporedJson(String fileName) {
         Raspored raspored = new Raspored();
-        //List<Termin> termini = new ArrayList<>();
+
         try {
-            // Kreirajte Gson objekat
-            Gson gson = new Gson();
-            String jsonString = "{\"Termin\":\"Mahesh\", \"Datum\":21, \"Kapacitet\":21 , \"Učionica\":21 }";
-            // Učitaj podatke iz JSON fajla u odgovarajuću Java strukturu
+
+            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
+
             List<Termin> termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
-           // termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
 
             raspored.setTermini(termini);
 

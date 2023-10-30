@@ -39,4 +39,9 @@ public class Prostorija {
     public void setPotrebneStvariLista(List<PotrebneOprema> potrebneStvariLista) {
         this.potrebneStvariLista = potrebneStvariLista;
     }
+
+    @Override
+    public String toString() {
+        return naziv + " " + kapacitet;
+    }
 }
