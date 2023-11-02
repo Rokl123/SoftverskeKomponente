@@ -1,106 +1,184 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
+import klase.ConfigMapping;
 import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import specifikacija.ImportExport;
 import specifikacija.LocalDateTimeTypeAdapter;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.lang.reflect.Type;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
+
 
 public class ImportExportS1 extends ImportExport {
 
     @Override
     public Raspored ucitajRasporedJson(String fileName) {
         Raspored raspored = new Raspored();
-
         try {
-
             Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
-
             List<Termin> termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
-
             raspored.setTermini(termini);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return raspored;
     }
 
     @Override
-    public Raspored ucitajRasporedCsv(String fileName) {
-
-        String line = "";
-        String csvSplitBy = ",";
-        List<Termin> termini= new ArrayList<>();
+    public Raspored ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
         Raspored raspored = new Raspored();
+        raspored.setTermini(loadApache(filepath,ConfigFile));
+
+        return raspored;
+    }
+
+    private List<Termin> loadApache(String filePath, String configPath) throws IOException {
+        List<ConfigMapping> columnMappings = readConfig(configPath);
+        Map<Integer, String> mappings = new HashMap<>();
+        for(ConfigMapping configMapping : columnMappings) {
+            mappings.put(configMapping.getIndex(), configMapping.getOriginal());
+        }
+
+        FileReader fileReader = new FileReader(filePath);
+        CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(fileReader);
+
+
+        List<Termin> termini = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mappings.get(-1));
+
+        for (CSVRecord record : parser) {
+            Termin termin = new Termin();
+
+            for (ConfigMapping entry : columnMappings) {
+                int columnIndex = entry.getIndex();
+
+                if(columnIndex == -1) continue;
+
+                String columnName = entry.getCustom();
+
+                switch (mappings.get(columnIndex)) {
+                    case "place":
+                        termin.setProstorija(new Prostorija(record.get(columnIndex),2));
+                        break;
+                    case "start":
+                        LocalDateTime startDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
+                        termin.setPocetak(startDateTime);
+                        break;
+                    case "end":
+                        LocalDateTime endDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
+                        termin.setKraj(endDateTime);
+                        break;
+                    case "additional":
+                        termin.getDodatneStvari().put(columnName, record.get(columnIndex));
+                        break;
+                }
+            }
+            termini.add(termin);
+        }
+        return termini;
+    }
+
+    private static List<ConfigMapping>  readConfig(String filePath) throws FileNotFoundException{
+        List<ConfigMapping> mappings = new ArrayList<>();
+
+        File file = new File(filePath);
+        Scanner scanner = new Scanner(file);
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] splitLine = line.split(" ", 3);
+
+            mappings.add(new ConfigMapping(Integer.valueOf(splitLine[0]), splitLine[1], splitLine[2]));
+        }
+
+        scanner.close();
+
+
+        return mappings;
+    }
+
+
+    @Override
+    public void upisiRasporedUJson(String fileName, String path,Raspored raspored) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String outputPath = path + File.separator + fileName + ".json";
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            while ((line = br.readLine()) != null) {
-                String[] row = line.split(csvSplitBy); // Predmet, Tip, Nastavnik, Grupe, Dan , Termin, Mesto
-
-                // prostorija, vreme, datum, kapacitet, potrebne stvari
-                // soba S1, 10-12,datum,kapacitet
-                String prostorija = row[0];
-                String vreme = row[1]; // 18-10-2023.
-                String[] pocetakIKraj = vreme.split("-");
-                int pocetak = Integer.parseInt(pocetakIKraj[0]);
-                int kraj = Integer.parseInt(pocetakIKraj[1]);
-
-                String[] datum = row[2].split("\\.");
-
-                int dan = Integer.parseInt(datum[0]);
-                int mesec = Integer.parseInt(datum[1]);
-                int godina =Integer.parseInt(datum[2]);
-                LocalDateTime datumDesavanja = LocalDateTime.of(godina,mesec,dan,pocetak,0); // godina, mesec ,dan ,sat
-                LocalDateTime datumDesavanjaKraj = LocalDateTime.of(godina,mesec,dan,kraj,0);
-
-                int kapacitet = Integer.parseInt(row[3]);
-                Prostorija p = new Prostorija(prostorija,kapacitet,null);
-
-
-                Termin t = new Termin(datumDesavanja,datumDesavanjaKraj,p);
-
-                termini.add(t);
-                //termini.add(row);
-            }
-        }
-        catch(Exception e) {
-            //  Block of code to handle errors
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.writeValue(new File(outputPath), raspored.getTermini());
+            System.out.println("JSON fajl je uspešno kreiran i popunjen.");
+        } catch (IOException e) {
+            System.out.println("JSON fajl nije uspešno kreiran i nije popunjen.");
             e.printStackTrace();
         }
-
-        raspored.setTermini(termini);
-
-        return raspored;
-
-    }
-
-
-    @Override
-    public void upisiRasporedUJson(String fileName, String path) {
-
     }
 
     @Override
-    public void upisiRasporedUCsv(String fileName, String path) {
+    public void upisiRasporedUCsv(String fileName, String path,Raspored raspored) {
+        try (FileWriter fileWriter = new FileWriter(path + "/" + fileName+".csv");
+             CSVWriter csvWriter = (CSVWriter) new CSVWriterBuilder(fileWriter)
+                     .withSeparator(',')
+                     .withQuoteChar('"')
+                     .build()) {
 
+            // Upisivanje zaglavlja (opciono)
+            String[] header = {"pocetak", "kraj", "prostorija","Dodatna Oprema"};
+            csvWriter.writeNext(header);
+
+            // Upisivanje podataka za svaki Termin
+            for (Termin termin : raspored.getTermini()) {
+                String[] data = {String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                csvWriter.writeNext(data);
+            }
+
+            System.out.println("CSV fajl je uspešno kreiran i popunjen.");
+        } catch (IOException e) {
+            System.out.println("CSV fajl nije uspešno kreiran i nije popunjen.");
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void upisiRasporedUPdf(String fileName, String path) {
+    public void upisiRasporedUPdf(String fileName, String path,Raspored raspored) {
+        Document document = new Document(PageSize.A4);
 
-    }
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(path + "/" + fileName+".pdf"));
+            document.open();
+
+            for (Termin termin : raspored.getTermini()) {
+
+                document.add(new Paragraph("Pocetak: " + termin.getPocetak()));
+                document.add(new Paragraph("Kraj: " + termin.getKraj()));
+                document.add(new Paragraph("Prostorija: " + termin.getProstorija()));
+                document.add(new Paragraph("Dodatna oprema: " +termin.getDodatneStvari()));
+            }
+
+            System.out.println("PDF fajl je uspešno kreiran i popunjen.");
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            document.close();
+        }
+
+
+
+   }
 }

@@ -8,12 +8,10 @@ public class Prostorija {
 
     private int kapacitet;
 
-    private List<PotrebneOprema> potrebneStvariLista;
 
-    public Prostorija(String naziv, int kapacitet, List<PotrebneOprema> potrebneStvariLista) {
+    public Prostorija(String naziv, int kapacitet) {
         this.naziv = naziv;
         this.kapacitet = kapacitet;
-        this.potrebneStvariLista = potrebneStvariLista;
     }
 
     public String getNaziv() {
@@ -32,13 +30,6 @@ public class Prostorija {
         this.kapacitet = kapacitet;
     }
 
-    public List<PotrebneOprema> getPotrebneStvariLista() {
-        return potrebneStvariLista;
-    }
-
-    public void setPotrebneStvariLista(List<PotrebneOprema> potrebneStvariLista) {
-        this.potrebneStvariLista = potrebneStvariLista;
-    }
 
     @Override
     public String toString() {

@@ -31,8 +31,8 @@ public class Raspored implements DodelaTermina {
     }
 
     @Override
-    public Prostorija dodavanjeProstorijaSaOsobinama(String naziv, int kapacitet, List<PotrebneOprema> osobineProstorije) {
-        return new Prostorija(naziv,kapacitet,osobineProstorije);
+    public Prostorija dodavanjeProstorijaSaOsobinama(String naziv, int kapacitet) {
+        return new Prostorija(naziv,kapacitet);
     }
 
     @Override
@@ -71,5 +71,12 @@ public class Raspored implements DodelaTermina {
 
     public void setTermini(List<Termin> termini) {
         this.termini = termini;
+    }
+
+    @Override
+    public String toString() {
+        return "Raspored{" +
+                "termini=" + termini +
+                '}';
     }
 }
