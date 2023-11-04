@@ -1,4 +1,7 @@
 specifikacija\ImportExport.class
+specifikacija\LocalDateTimeTypeAdapter.class
+specifikacija\ImportExport$1.class
+klase\ConfigMapping.class
 klase\Raspored.class
 klase\PotrebneOprema.class
 klase\Prostorija.class
