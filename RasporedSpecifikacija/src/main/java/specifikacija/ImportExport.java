@@ -21,12 +21,23 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
 public class ImportExport {
+
+    LocalTime vremePocetka = LocalTime.of(8, 0, 0);
+    LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
+    List<LocalDate> izuzetiDani = new ArrayList<>();
+
+    public ImportExport() {
+        izuzetiDani.add(LocalDate.of(2024, 1, 1));
+        izuzetiDani.add(LocalDate.of(2023, 12, 31));
+        izuzetiDani.add(LocalDate.of(2024, 1, 6));
+        izuzetiDani.add(LocalDate.of(2024, 1, 7));
+        izuzetiDani.add(LocalDate.of(2024, 5, 1));
+    }
 //    public Raspored ucitajRasporedJson(String fileName) {
 //        Raspored raspored = new Raspored();
 //        try {
@@ -41,15 +52,7 @@ public class ImportExport {
 
     public Raspored ucitajRasporedJson(String fileName) {
         Raspored raspored = new Raspored();
-        LocalTime vremePocetka = LocalTime.of(8, 0, 0);
-        LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
-        List<LocalDate> izuzetiDani = new ArrayList<>();
 
-        izuzetiDani.add(LocalDate.of(2024, 1, 1));
-        izuzetiDani.add(LocalDate.of(2023, 12, 31));
-        izuzetiDani.add(LocalDate.of(2024, 1, 6));
-        izuzetiDani.add(LocalDate.of(2024, 1, 7));
-        izuzetiDani.add(LocalDate.of(2024, 5, 1));
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
             List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
@@ -137,15 +140,6 @@ public class ImportExport {
         List<ConfigMapping> columnMappings = readConfig(configPath);
         Map<Integer, String> mappings = new HashMap<>();
 
-        LocalTime vremePocetka = LocalTime.of(8, 0, 0);
-        LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
-        List<LocalDate> izuzetiDani = new ArrayList<>();
-
-        izuzetiDani.add(LocalDate.of(2024, 1, 1));
-        izuzetiDani.add(LocalDate.of(2023, 12, 31));
-        izuzetiDani.add(LocalDate.of(2024, 1, 6));
-        izuzetiDani.add(LocalDate.of(2024, 1, 7));
-        izuzetiDani.add(LocalDate.of(2024, 5, 1));
 
         for(ConfigMapping configMapping : columnMappings) {
             mappings.put(configMapping.getIndex(), configMapping.getOriginal());
