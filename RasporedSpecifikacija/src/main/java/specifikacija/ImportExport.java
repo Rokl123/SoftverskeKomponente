@@ -5,10 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
@@ -21,22 +18,69 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class ImportExport {
+//    public Raspored ucitajRasporedJson(String fileName) {
+//        Raspored raspored = new Raspored();
+//        try {
+//            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
+//            List<Termin> termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
+//            raspored.setTermini(termini);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return raspored;
+//    }
+
     public Raspored ucitajRasporedJson(String fileName) {
         Raspored raspored = new Raspored();
+        LocalTime vremePocetka = LocalTime.of(8, 0, 0);
+        LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
+        List<LocalDate> izuzetiDani = new ArrayList<>();
+
+        izuzetiDani.add(LocalDate.of(2024, 1, 1));
+        izuzetiDani.add(LocalDate.of(2023, 12, 31));
+        izuzetiDani.add(LocalDate.of(2024, 1, 6));
+        izuzetiDani.add(LocalDate.of(2024, 1, 7));
+        izuzetiDani.add(LocalDate.of(2024, 5, 1));
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
-            List<Termin> termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
-            raspored.setTermini(termini);
+            List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
+            List<Termin> filtriraniTermini = new ArrayList<>();
+            for (Termin termin : sviTermini) {
+
+                LocalDateTime pocetakTermina = termin.getPocetak();
+                LocalDateTime krajTermina = termin.getKraj();
+                if (pocetakTermina.toLocalTime().isAfter(vremePocetka) && krajTermina.toLocalTime().isBefore(vremeZavrsetka)) {
+                    if (!(izuzetiDani.contains(pocetakTermina.toLocalDate()) || izuzetiDani.contains(krajTermina.toLocalDate()))) {
+                        filtriraniTermini.add(termin);
+                    }
+                    else{
+                        System.out.println("Datum nije dobar");
+                    }
+                }
+                else{
+                    System.out.println("Vreme nije dobro");
+                }
+            }
+            raspored.setTermini(filtriraniTermini);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return raspored;
     }
+
+
+
+
+
 
 
     public Raspored ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
@@ -45,16 +89,69 @@ public class ImportExport {
         return raspored;
     }
 
+//    private List<Termin> loadApache(String filePath, String configPath) throws IOException {
+//        List<ConfigMapping> columnMappings = readConfig(configPath);
+//        Map<Integer, String> mappings = new HashMap<>();
+//        for(ConfigMapping configMapping : columnMappings) {
+//            mappings.put(configMapping.getIndex(), configMapping.getOriginal());
+//        }
+//        FileReader fileReader = new FileReader(filePath);
+//        CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(fileReader);
+//
+//        List<Termin> termini = new ArrayList<>();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mappings.get(-1));
+//
+//        for (CSVRecord record : parser) {
+//            Termin termin = new Termin();
+//
+//            for (ConfigMapping entry : columnMappings) {
+//                int columnIndex = entry.getIndex();
+//
+//                if(columnIndex == -1) continue;
+//
+//                String columnName = entry.getCustom();
+//
+//                switch (mappings.get(columnIndex)) {
+//                    case "place":
+//                        termin.setProstorija(new Prostorija(record.get(columnIndex),2));
+//                        break;
+//                    case "start":
+//                        LocalDateTime startDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
+//                        termin.setPocetak(startDateTime);
+//                        break;
+//                    case "end":
+//                        LocalDateTime endDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
+//                        termin.setKraj(endDateTime);
+//                        break;
+//                    case "additional":
+//                        termin.getDodatneStvari().put(columnName, record.get(columnIndex));
+//                        break;
+//                }
+//            }
+//            termini.add(termin);
+//        }
+//        return termini;
+//    }
+
     private List<Termin> loadApache(String filePath, String configPath) throws IOException {
         List<ConfigMapping> columnMappings = readConfig(configPath);
         Map<Integer, String> mappings = new HashMap<>();
+
+        LocalTime vremePocetka = LocalTime.of(8, 0, 0);
+        LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
+        List<LocalDate> izuzetiDani = new ArrayList<>();
+
+        izuzetiDani.add(LocalDate.of(2024, 1, 1));
+        izuzetiDani.add(LocalDate.of(2023, 12, 31));
+        izuzetiDani.add(LocalDate.of(2024, 1, 6));
+        izuzetiDani.add(LocalDate.of(2024, 1, 7));
+        izuzetiDani.add(LocalDate.of(2024, 5, 1));
+
         for(ConfigMapping configMapping : columnMappings) {
             mappings.put(configMapping.getIndex(), configMapping.getOriginal());
         }
-
         FileReader fileReader = new FileReader(filePath);
         CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(fileReader);
-
 
         List<Termin> termini = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mappings.get(-1));
@@ -86,9 +183,29 @@ public class ImportExport {
                         break;
                 }
             }
+
             termini.add(termin);
         }
-        return termini;
+
+        List<Termin> filtriraniTermini = new ArrayList<>();
+        for (Termin termin : termini) {
+
+            LocalDateTime pocetakTermina = termin.getPocetak();
+            LocalDateTime krajTermina = termin.getKraj();
+
+            if (pocetakTermina.toLocalTime().isAfter(vremePocetka) && krajTermina.toLocalTime().isBefore(vremeZavrsetka)) {
+                if (!(izuzetiDani.contains(pocetakTermina.toLocalDate()) || izuzetiDani.contains(krajTermina.toLocalDate()))) {
+                    filtriraniTermini.add(termin);
+                }
+                else{
+                    System.out.println("Datum nije dobar");
+                }
+            }
+            else{
+                System.out.println("Vreme nije dobro");
+            }
+        }
+        return filtriraniTermini;
     }
 
     private static List<ConfigMapping>  readConfig(String filePath) throws FileNotFoundException {
@@ -167,7 +284,7 @@ public class ImportExport {
             }
 
             System.out.println("PDF fajl je uspešno kreiran i popunjen.");
-        } catch (DocumentException | IOException e) {
+        } catch (ExceptionConverter | DocumentException | IOException e) {
             e.printStackTrace();
         } finally {
             document.close();
