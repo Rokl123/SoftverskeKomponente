@@ -12,17 +12,17 @@ public interface DodelaTermina {
 
     Prostorija dodavanjeProstorijaSaOsobinama(String naziv,int kapacitet);
 
-    Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija);
+    Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored);
 
-    Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija);
+    Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija, Raspored raspored);
 
-    boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj);
+    boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored);
 
-    boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj);
+    boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored);
 
-    void izlistavanjeSlobodniTermini(String kriterijum);
+    void izlistavanjeSlobodniTermini(String kriterijum,Raspored raspored);
 
-    void pretrazivanjeVezaniPodaci(String podatak);
+    void pretrazivanjeVezaniPodaci(String podatak, Raspored raspored);
 
 
 }
