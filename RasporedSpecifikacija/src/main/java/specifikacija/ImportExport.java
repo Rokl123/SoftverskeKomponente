@@ -86,10 +86,10 @@ public class ImportExport {
 
 
 
-    public Raspored ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
-        Raspored raspored = new Raspored();
-        raspored.setTermini(loadApache(filepath,ConfigFile));
-        return raspored;
+    public List<Termin> ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
+//        Raspored raspored = new Raspored();
+//        raspored.setTermini(loadApache(filepath,ConfigFile));
+        return loadApache(filepath,ConfigFile);
     }
 
 //    private List<Termin> loadApache(String filePath, String configPath) throws IOException {

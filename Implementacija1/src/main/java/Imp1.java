@@ -31,13 +31,16 @@ public class Imp1 implements DodelaTermina {
         return false;
     }
 
-    @Override
+    @Override // User is typing his start and end
     public Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
+
             if(!preklapanjeTermina(pocetak,kraj,t.getPocetak(),t.getKraj())){
                 System.out.println("Termin je uspesno kreiran");
+                raspored.getTermini().add(new Termin(pocetak, kraj, prostorija));
                 return new Termin(pocetak, kraj, prostorija);
             }
+
         }
         System.out.println("Ovaj termin je zauzet, tako da termin u datim vrememnima ne moze biti kreiran");
         return null;
