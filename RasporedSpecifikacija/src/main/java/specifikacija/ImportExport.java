@@ -37,26 +37,14 @@ public class ImportExport {
         izuzetiDani.add(LocalDate.of(2024, 1, 6));
         izuzetiDani.add(LocalDate.of(2024, 1, 7));
         izuzetiDani.add(LocalDate.of(2024, 5, 1));
+        //ovo moramo da citamo iz fajla
     }
-//    public Raspored ucitajRasporedJson(String fileName) {
-//        Raspored raspored = new Raspored();
-//        try {
-//            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
-//            List<Termin> termini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
-//            raspored.setTermini(termini);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return raspored;
-//    }
-
-    public Raspored ucitajRasporedJson(String fileName) {
-        Raspored raspored = new Raspored();
+    public List<Termin> ucitajRasporedJson(String fileName) {
+        List<Termin> filtriraniTermini = new ArrayList<>();
 
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
             List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
-            List<Termin> filtriraniTermini = new ArrayList<>();
             for (Termin termin : sviTermini) {
 
                 LocalDateTime pocetakTermina = termin.getPocetak();
@@ -73,68 +61,17 @@ public class ImportExport {
                     System.out.println("Vreme nije dobro");
                 }
             }
-            raspored.setTermini(filtriraniTermini);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return raspored;
+        return filtriraniTermini;
     }
 
 
 
-
-
-
-
-    public List<Termin> ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
-//        Raspored raspored = new Raspored();
-//        raspored.setTermini(loadApache(filepath,ConfigFile));
+    public List<Termin> ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {;
         return loadApache(filepath,ConfigFile);
     }
-
-//    private List<Termin> loadApache(String filePath, String configPath) throws IOException {
-//        List<ConfigMapping> columnMappings = readConfig(configPath);
-//        Map<Integer, String> mappings = new HashMap<>();
-//        for(ConfigMapping configMapping : columnMappings) {
-//            mappings.put(configMapping.getIndex(), configMapping.getOriginal());
-//        }
-//        FileReader fileReader = new FileReader(filePath);
-//        CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(fileReader);
-//
-//        List<Termin> termini = new ArrayList<>();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mappings.get(-1));
-//
-//        for (CSVRecord record : parser) {
-//            Termin termin = new Termin();
-//
-//            for (ConfigMapping entry : columnMappings) {
-//                int columnIndex = entry.getIndex();
-//
-//                if(columnIndex == -1) continue;
-//
-//                String columnName = entry.getCustom();
-//
-//                switch (mappings.get(columnIndex)) {
-//                    case "place":
-//                        termin.setProstorija(new Prostorija(record.get(columnIndex),2));
-//                        break;
-//                    case "start":
-//                        LocalDateTime startDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
-//                        termin.setPocetak(startDateTime);
-//                        break;
-//                    case "end":
-//                        LocalDateTime endDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
-//                        termin.setKraj(endDateTime);
-//                        break;
-//                    case "additional":
-//                        termin.getDodatneStvari().put(columnName, record.get(columnIndex));
-//                        break;
-//                }
-//            }
-//            termini.add(termin);
-//        }
-//        return termini;
-//    }
 
     private List<Termin> loadApache(String filePath, String configPath) throws IOException {
         List<ConfigMapping> columnMappings = readConfig(configPath);

@@ -4,7 +4,9 @@ import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public interface DodelaTermina {
 
@@ -13,6 +15,8 @@ public interface DodelaTermina {
     Prostorija dodavanjeProstorijaSaOsobinama(String naziv,int kapacitet);
 
     Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored);
+
+    boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, LocalTime start,LocalTime end);
 
     Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija, Raspored raspored);
 

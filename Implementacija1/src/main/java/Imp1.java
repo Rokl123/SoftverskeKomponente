@@ -3,7 +3,9 @@ import klase.Raspored;
 import klase.Termin;
 import specifikacija.DodelaTermina;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Imp1 implements DodelaTermina {
 
@@ -45,6 +47,8 @@ public class Imp1 implements DodelaTermina {
         System.out.println("Ovaj termin je zauzet, tako da termin u datim vrememnima ne moze biti kreiran");
         return null;
     }
+
+
 
     @Override
     public Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija, Raspored raspored) {
@@ -116,6 +120,11 @@ public class Imp1 implements DodelaTermina {
                 System.out.println("Slodoan je");
             }
         }
+    }
+
+    @Override
+    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, LocalTime start, LocalTime end) {
+        return false;
     }
 
 }
