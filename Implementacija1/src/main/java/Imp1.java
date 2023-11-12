@@ -96,8 +96,15 @@ public class Imp1 implements DodelaTermina {
     @Override
     public void izlistavanjeSlobodniTermini(String kriterijum, Raspored raspored) {
         boolean flag = true;
+       //Za dan DATUM je slobodan termin Od ... Do ...
+      LocalDateTime pocetniDatum = raspored.getTermini().get(0).getPocetak();
+      System.out.println("Za DAN " + pocetniDatum + " slobodni termini su: \n");
         for(Termin t:raspored.getTermini()){
             if(t.getDodatneStvari().containsValue(kriterijum)){
+                if(pocetniDatum.getDayOfMonth()!=t.getPocetak().getDayOfMonth()) {
+                    System.out.println("Za DAN " + t.getPocetak() + " slobodni termini su: \n");
+                    pocetniDatum = t.getPocetak();
+                }
                 if(raspored.getHourFrom() == t.getPocetak().toLocalTime()){
                     System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
                 }
@@ -114,20 +121,11 @@ public class Imp1 implements DodelaTermina {
                     else{
                             System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do: " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
                     }
-                      if(raspored.getTermini().indexOf(t) +1 == raspored.getTermini().size()){
+                    if(raspored.getTermini().indexOf(t) +1 == raspored.getTermini().size()){
                         System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
                     }
                 }
-
-
-
             }
-
-            else{
-                System.out.println("Zauzeto je");
-
-            }
-
 
         }
     }
