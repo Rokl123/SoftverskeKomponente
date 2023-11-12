@@ -69,7 +69,7 @@ public class ImportExport {
 
 
 
-    public List<Termin> ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {;
+    public List<Termin> ucitajRasporedCsv(String filepath,String ConfigFile) throws Exception {
         return loadApache(filepath,ConfigFile);
     }
 

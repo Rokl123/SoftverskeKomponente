@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Main {
     public static void main(String[] args) throws Exception{
         ImportExport i = new ImportExport();
-        Raspored r = new Raspored("Imp1");
+        Raspored r = new Raspored();
 //         r = i.ucitajRasporedJson("Implementacija1/src/proba.json");
 
     //    r = i.ucitajRasporedCsv("Implementacija1/src/termini.csv","Implementacija1/src/config.txt");

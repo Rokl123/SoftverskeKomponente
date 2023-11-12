@@ -29,20 +29,17 @@ public class Raspored  {
     // Drugi konstruktor se samo koristi u svrhe metoda da se ne bi pravila nova trajanja
 
 
-   public Raspored(String s){
+   public Raspored(){
 
-       if(s.equals("Imp2")){
        try {
            initializeSchedule();
        }
        catch(Exception e) {
            e.printStackTrace();
          }
-       }
-   }
-   public Raspored(){
 
    }
+
 
    public void initializeSchedule() throws ParseException {
 
@@ -62,7 +59,7 @@ public class Raspored  {
    }
 
 
-   public void addTermin(Termin t){
+    public void addTermin(Termin t){
         termini.add(t);
     }
 

@@ -14,6 +14,21 @@ public class Imp2 implements DodelaTermina {
         return false;
     }
 
+    public boolean preklapanjeTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda,LocalTime pocetak,LocalTime kraj,Termin t) {
+        // PERIOD: 23.8.2023 - 20.9.2023 8:15 - 12:00
+        if ((t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() == pocetak.getHour()
+                && t.getPocetak().getMinute() == pocetak.getMinute()) ||
+                (t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() >= pocetak.getHour() && t.getPocetak().getHour()<kraj.getHour()
+                && t.getPocetak().getMinute() == pocetak.getMinute()) && (t.getPocetak().isAfter(pocetakPerioda) && t.getPocetak().isBefore(krajPerioda))) { //Termin 10.12.2023 8:15 TUE    10.11.2023 - 1.1.2024 8:15 TUE
+
+            System.out.println("Vec postoji termin u zadatom periodu! " + t);
+            return true;
+        }
+
+        return false;
+    }
+
+
     @Override
     public Prostorija dodavanjeProstorijaSaOsobinama(String naziv, int kapacitet) {
         return null;
@@ -27,6 +42,7 @@ public class Imp2 implements DodelaTermina {
 
     @Override
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
+
         return false;
     }
 
@@ -61,13 +77,10 @@ public class Imp2 implements DodelaTermina {
 
         for (Termin t : r.getTermini()) {
             //Ako termin ima isti dan, isti sat i iste minute i da je izmedju pocetka perioda i kraja onda ne mozemo da napravimo periodicni termin
-            if (t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() == pocetakPerioda.getHour()
-                    && t.getPocetak().getMinute() == pocetakPerioda.getMinute() && (t.getPocetak().isAfter(pocetakPerioda) && t.getPocetak().isBefore(krajPerioda))) { //Termin 10.12.2023 8:15 TUE    10.11.2023 - 1.1.2024 8:15 TUE
+           if(preklapanjeTermina(day,pocetakPerioda,krajPerioda,start,end,t)){
+               return false;
+           }
 
-
-                System.out.println("Vec postoji termin u zadatom periodu! " + t);
-                return false;
-            }
         }
 
         LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getDayOfMonth(), pocetakPerioda.getMonthValue(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
