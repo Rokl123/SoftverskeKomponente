@@ -7,6 +7,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Imp2 implements DodelaTermina {
     @Override
@@ -58,6 +60,14 @@ public class Imp2 implements DodelaTermina {
 
     @Override
     public void pretrazivanjeVezaniPodaci(String podatak, Raspored raspored) {
+        Map<String,String> mapaStvari = new HashMap<>();
+        for(Termin t : raspored.getTermini()){
+            mapaStvari = t.getDodatneStvari();
+            if(mapaStvari.containsValue(podatak)){
+                System.out.println("Termin sa zadatim podatkom: " + t + "\n");
+            }
+
+        }
 
     }
 
@@ -83,14 +93,13 @@ public class Imp2 implements DodelaTermina {
 
         }
 
-        LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getDayOfMonth(), pocetakPerioda.getMonthValue(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
-        LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getDayOfMonth(), pocetakPerioda.getMonthValue(), end.getHour(), end.getMinute());
+        LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
+        LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
         while (periodDo.compareTo(krajPerioda) < 0) {
             Termin t = new Termin(period, periodDo, p);
             period = period.plusDays(7);
             periodDo = periodDo.plusDays(7);
             r.getTermini().add(t);
-
         }
         System.out.println("Termin u zadatom periodu je uspesno kreiran!");
         return true;
