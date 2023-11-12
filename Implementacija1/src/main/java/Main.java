@@ -5,11 +5,13 @@ import specifikacija.LocalDateTimeTypeAdapter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        ImportExport i = new ImportExport();
+
         Raspored r = new Raspored();
+        ImportExport i = new ImportExport(r.getHourFrom(),r.getHourTo());
 //         r = i.ucitajRasporedJson("Implementacija1/src/proba.json");
 
     //    r = i.ucitajRasporedCsv("Implementacija1/src/termini.csv","Implementacija1/src/config.txt");
@@ -17,6 +19,8 @@ public class Main {
         System.out.println(r);
 
         Imp1 imp1 = new Imp1();
+
+        imp1.izlistavanjeSlobodniTermini("UUP",r);
 
 
 

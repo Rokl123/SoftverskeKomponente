@@ -95,13 +95,40 @@ public class Imp1 implements DodelaTermina {
 
     @Override
     public void izlistavanjeSlobodniTermini(String kriterijum, Raspored raspored) {
+        boolean flag = true;
         for(Termin t:raspored.getTermini()){
-            if(!t.getDodatneStvari().containsValue(kriterijum)){
-                System.out.println("Slobodno je");
+            if(t.getDodatneStvari().containsValue(kriterijum)){
+                if(raspored.getHourFrom() == t.getPocetak().toLocalTime()){
+                    System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
+                }
+                else{
+                    if(flag){
+                        flag = false;
+                        System.out.println("Od: "+ raspored.getHourFrom() + " do: " +t.getPocetak().getHour() + " : "+t.getPocetak().getMinute());
+
+                    }
+                    else if(raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getKraj().getDayOfMonth() != t.getKraj().getDayOfMonth()){
+                        flag = true;
+                        System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
+                    }
+                    else{
+                            System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do: " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
+                    }
+                      if(raspored.getTermini().indexOf(t) +1 == raspored.getTermini().size()){
+                        System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
+                    }
+                }
+
+
+
             }
+
             else{
                 System.out.println("Zauzeto je");
+
             }
+
+
         }
     }
 

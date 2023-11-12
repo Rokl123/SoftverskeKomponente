@@ -27,11 +27,13 @@ import java.util.List;
 
 public class ImportExport {
 
-    LocalTime vremePocetka = LocalTime.of(8, 0, 0);
-    LocalTime vremeZavrsetka = LocalTime.of(21, 0, 0);;
+    LocalTime vremePocetka;
+    LocalTime vremeZavrsetka;
     List<LocalDate> izuzetiDani = new ArrayList<>();
 
-    public ImportExport() {
+    public ImportExport(LocalTime vremePocetka,LocalTime vremeZavrsetka) {
+        this.vremeZavrsetka = vremeZavrsetka;
+        this.vremePocetka = vremePocetka;
         izuzetiDani.add(LocalDate.of(2024, 1, 1));
         izuzetiDani.add(LocalDate.of(2023, 12, 31));
         izuzetiDani.add(LocalDate.of(2024, 1, 6));

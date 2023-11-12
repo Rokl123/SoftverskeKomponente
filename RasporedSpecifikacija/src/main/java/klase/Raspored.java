@@ -19,9 +19,9 @@ public class Raspored  {
 
    private Date to;
 
-   private int hourFrom; //-------> ovo sve oznacava od kad do kad ce trajati raspored
+   private LocalTime hourFrom; //-------> ovo sve oznacava od kad do kad ce trajati raspored
 
-   private int hourTo;
+   private LocalTime hourTo;
 
    // promenjen konstruktor rasporeda za inicijalizaciju samog raspored
     // Raspored sada ima od kad i do kad traje kao i od koliko i do koliko sati svakoga dana
@@ -52,9 +52,9 @@ public class Raspored  {
 
        this.to = new SimpleDateFormat("dd.MM.yyyy").parse(datum[1]);
 
-       this.hourFrom = Integer.parseInt(datum[2]);
+       this.hourFrom = LocalTime.parse(datum[2]);
 
-       this.hourTo = Integer.parseInt(datum[3]);
+       this.hourTo = LocalTime.parse(datum[3]);
 
    }
 
@@ -87,11 +87,19 @@ public class Raspored  {
         return to;
     }
 
-    public int getHourFrom() {
+    public LocalTime getHourFrom() {
         return hourFrom;
     }
 
-    public int getHourTo() {
+    public void setHourFrom(LocalTime hourFrom) {
+        this.hourFrom = hourFrom;
+    }
+
+    public LocalTime getHourTo() {
         return hourTo;
+    }
+
+    public void setHourTo(LocalTime hourTo) {
+        this.hourTo = hourTo;
     }
 }
