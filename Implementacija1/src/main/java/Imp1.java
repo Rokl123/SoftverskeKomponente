@@ -98,31 +98,41 @@ public class Imp1 implements DodelaTermina {
         boolean flag = true;
        //Za dan DATUM je slobodan termin Od ... Do ...
       LocalDateTime pocetniDatum = raspored.getTermini().get(0).getPocetak();
-      System.out.println("Za DAN " + pocetniDatum + " slobodni termini su: \n");
+      System.out.println("Za DAN " + pocetniDatum.toLocalDate() + " slobodni termini su: \n");
         for(Termin t:raspored.getTermini()){
             if(t.getDodatneStvari().containsValue(kriterijum)){
                 if(pocetniDatum.getDayOfMonth()!=t.getPocetak().getDayOfMonth()) {
-                    System.out.println("Za DAN " + t.getPocetak() + " slobodni termini su: \n");
+                    System.out.println("Za DAN " + t.getPocetak().toLocalDate() + " slobodni termini su: \n");
                     pocetniDatum = t.getPocetak();
                 }
                 if(raspored.getHourFrom() == t.getPocetak().toLocalTime()){
-                    System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
+                    System.out.println("Od: "+t.getKraj().getHour() + ":"+t.getKraj().getMinute() + " do " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
                 }
                 else{
-                    if(flag){
-                        flag = false;
-                        System.out.println("Od: "+ raspored.getHourFrom() + " do: " +t.getPocetak().getHour() + " : "+t.getPocetak().getMinute());
 
+                    try {
+                        if(flag){
+                            flag = false;
+                            System.out.println("Od: "+ raspored.getHourFrom() + " do: " +t.getPocetak().getHour() + ":"+t.getPocetak().getMinute());
+                        }
+                         else if(raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getDayOfMonth() != t.getKraj().getDayOfMonth() ){
+                            flag = true;
+                            System.out.println("Od: "+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getMinute()  + " do: "  +raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getMinute());
+                            System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
+                        }
+                        else if(raspored.getTermini().get(raspored.getTermini().indexOf(t)+1).getPocetak().toLocalTime() != t.getKraj().toLocalTime() ){
+                            System.out.println("Od: "+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getMinute()  + " do: "  +raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getMinute());
+                        }
+                        else{
+                            System.out.println("Od: " +raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getPocetak().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getPocetak().getMinute() + " do: " +raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getHour() + ":"+raspored.getTermini().get(raspored.getTermini().indexOf(t) -1).getKraj().getMinute() );
+                        }
                     }
-                    else if(raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getKraj().getDayOfMonth() != t.getKraj().getDayOfMonth()){
-                        flag = true;
-                        System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
+                    catch (IndexOutOfBoundsException exc){
+                        System.out.println("Od: "+ raspored.getHourFrom() + " do: " +t.getPocetak().getHour() + ":"+t.getPocetak().getMinute());
                     }
-                    else{
-                            System.out.println("Od: "+t.getKraj().getHour() + " : "+t.getKraj().getMinute() + " do: " +raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getHour() + " : "+raspored.getTermini().get(raspored.getTermini().indexOf(t) +1).getPocetak().getMinute());
-                    }
+
                     if(raspored.getTermini().indexOf(t) +1 == raspored.getTermini().size()){
-                        System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo());
+                        System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo()+"\n");
                     }
                 }
             }

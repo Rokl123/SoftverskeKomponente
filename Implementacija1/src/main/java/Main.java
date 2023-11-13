@@ -14,7 +14,7 @@ public class Main {
         ImportExport i = new ImportExport(r.getHourFrom(),r.getHourTo());
 //         r = i.ucitajRasporedJson("Implementacija1/src/proba.json");
 
-    //    r = i.ucitajRasporedCsv("Implementacija1/src/termini.csv","Implementacija1/src/config.txt");
+    // r = i.ucitajRasporedCsv("Implementacija1/src/termini.csv","Implementacija1/src/config.txt");
         r.setTermini(i.ucitajRasporedCsv("Implementacija1/src/termini.csv","Implementacija1/src/config.txt"));
         System.out.println(r);
 
