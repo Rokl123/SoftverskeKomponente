@@ -2,6 +2,7 @@ package klase;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Termin {
@@ -15,6 +16,8 @@ public class Termin {
     private Prostorija prostorija;
 
     private Map<String,String> dodatneStvari;
+
+
 
     public Termin(Map<String, String> dodatneStvari) {
         this.dodatneStvari = dodatneStvari;
@@ -42,6 +45,9 @@ public class Termin {
         this.trajanje = trajanje;
         this.prostorija = prostorija;
     }
+
+
+
 
     public int getTrajanje() {
         return trajanje;
@@ -82,6 +88,8 @@ public class Termin {
     public void setDodatneStvari(Map<String, String> dodatneStvari) {
         this.dodatneStvari = dodatneStvari;
     }
+
+
 
     @Override
     public String toString() {

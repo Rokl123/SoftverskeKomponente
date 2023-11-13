@@ -1,12 +1,10 @@
 import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
+import klase.TerminPeriod;
 import specifikacija.DodelaTermina;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +16,18 @@ public class Imp2 implements DodelaTermina {
 
     public boolean preklapanjeTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda,LocalTime pocetak,LocalTime kraj,Termin t) {
         // PERIOD: 23.8.2023 - 20.9.2023 8:15 - 12:00
+        if(t instanceof TerminPeriod) {
+
+            for (LocalDate datum : ((TerminPeriod) t).getVremeOdrzavanja()) {
+                if (datum.getDayOfWeek() == day && (((TerminPeriod) t).getPocetakTermina() == pocetak || ((TerminPeriod) t).getKrajTermina()==kraj)
+                        || (datum.getDayOfWeek()==day && (pocetak.isAfter(((TerminPeriod) t).getPocetakTermina()) && pocetak.isBefore(((TerminPeriod) t).getKrajTermina())))){ //Termin koji ima odrzavanja svaki UTORAK u 12:15 do 15:00
+                    System.out.println("Vec postoji termin u zadatom periodu! " + t);
+                    return true;
+                }
+
+            }
+        }
+
         if ((t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() == pocetak.getHour()
                 && t.getPocetak().getMinute() == pocetak.getMinute()) ||
                 (t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() >= pocetak.getHour() && t.getPocetak().getHour()<kraj.getHour()
@@ -26,6 +36,9 @@ public class Imp2 implements DodelaTermina {
             System.out.println("Vec postoji termin u zadatom periodu! " + t);
             return true;
         }
+
+
+
 
         return false;
     }
@@ -63,7 +76,7 @@ public class Imp2 implements DodelaTermina {
         Map<String,String> mapaStvari = new HashMap<>();
         for(Termin t : raspored.getTermini()){
             mapaStvari = t.getDodatneStvari();
-            if(mapaStvari.containsValue(podatak)){
+            if(mapaStvari.containsValue(podatak) || t.getProstorija().getNaziv().equals(podatak)){
                 System.out.println("Termin sa zadatim podatkom: " + t + "\n");
             }
 
@@ -95,12 +108,17 @@ public class Imp2 implements DodelaTermina {
 
         LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
         LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
+        TerminPeriod tP = new TerminPeriod(pocetakPerioda,krajPerioda,p);
+        tP.setPocetakTermina(start);
+        tP.setKrajTermina(end);
         while (periodDo.compareTo(krajPerioda) < 0) {
-            Termin t = new Termin(period, periodDo, p);
-            period = period.plusDays(7);
-            periodDo = periodDo.plusDays(7);
-            r.getTermini().add(t);
+            if(period.getDayOfWeek() == day) {
+                tP.getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
+            }
+            period = period.plusDays(1);
+            periodDo = periodDo.plusDays(1);
         }
+        r.getTermini().add(tP); // postoji Termin sa Periodom sada!
         System.out.println("Termin u zadatom periodu je uspesno kreiran!");
         return true;
     }

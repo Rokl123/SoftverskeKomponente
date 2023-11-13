@@ -2,6 +2,7 @@ import klase.Prostorija;
 import klase.Raspored;
 import specifikacija.ImportExport;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -26,7 +27,7 @@ public class MainProba {
         LocalTime startHour = LocalTime.of(15,15);
         LocalTime endHour = LocalTime.of(17,30);
 
-        imp2.kreirajTerminUzPk(ltPocetak.getDayOfWeek(),ltPocetak,ltKraj,r,new Prostorija("RAF4",50),startHour,endHour);
+        imp2.kreirajTerminUzPk(DayOfWeek.TUESDAY,ltPocetak,ltKraj,r,new Prostorija("RAF4",50),startHour,endHour);
 
        // imp2.pretrazivanjeVezaniPodaci("UUP",r);
 
