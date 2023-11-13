@@ -83,9 +83,22 @@ public class Imp2 implements DodelaTermina {
         }
 
     }
+    private void addAdditional(Map<String,String> dodatneStvari,String s){
 
+        String[] info = s.split(","); //Znaci string izgleda kao : Profesor:Arsenije Petrovic,Racunar=DA,Predmet="UUP"
+
+        String finale = "";
+        int i=0;
+        while(i < info.length){
+            finale = info[i]; // Profesor:Arsenije Petrovic
+            String[] keyValue = finale.split(":");
+            dodatneStvari.put(keyValue[0],keyValue[1]);
+            i++;
+        }
+
+    }
     @Override
-    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, LocalTime start, LocalTime end) {
+    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, LocalTime start, LocalTime end, String dodatneStvari) {
 
         LocalDateTime ltPocetak = LocalDateTime.ofInstant(r.getFrom().toInstant(), ZoneId.systemDefault()); // u rasporedu period od kad do kad vazi
 
@@ -118,6 +131,7 @@ public class Imp2 implements DodelaTermina {
             period = period.plusDays(1);
             periodDo = periodDo.plusDays(1);
         }
+        addAdditional(tP.getDodatneStvari(),dodatneStvari);
         r.getTermini().add(tP); // postoji Termin sa Periodom sada!
         System.out.println("Termin u zadatom periodu je uspesno kreiran!");
         return true;

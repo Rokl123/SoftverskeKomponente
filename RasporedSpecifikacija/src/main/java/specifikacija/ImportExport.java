@@ -9,10 +9,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
-import klase.ConfigMapping;
-import klase.Prostorija;
-import klase.Raspored;
-import klase.Termin;
+import klase.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -189,6 +186,12 @@ public class ImportExport {
 
 
             for (Termin termin : raspored.getTermini()) {
+                if(termin instanceof TerminPeriod){
+                    String[] data2 = {String.valueOf(((TerminPeriod) termin).getPocetakPerioda()), String.valueOf(((TerminPeriod) termin).getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                    csvWriter.writeNext(data2);
+                    continue;
+                }
+
                 String[] data = {String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                 csvWriter.writeNext(data);
             }

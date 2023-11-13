@@ -27,7 +27,7 @@ public class MainProba {
         LocalTime startHour = LocalTime.of(15,15);
         LocalTime endHour = LocalTime.of(17,30);
 
-        imp2.kreirajTerminUzPk(DayOfWeek.TUESDAY,ltPocetak,ltKraj,r,new Prostorija("RAF4",50),startHour,endHour);
+        imp2.kreirajTerminUzPk(DayOfWeek.TUESDAY,ltPocetak,ltKraj,r,new Prostorija("RAF4",50),startHour,endHour,"Profesor:Arsenije Petrovic,Racunar:DA,Predmet:UUP");
 
        // imp2.pretrazivanjeVezaniPodaci("UUP",r);
 
@@ -37,8 +37,8 @@ public class MainProba {
 
 
 
-        i.upisiRasporedUJson("arsa", "Implementacija1/src", r);
-        i.upisiRasporedUCsv("arsa", "Implementacija1/src", r);
+        i.upisiRasporedUJson("arsa", "Implementacija2/src", r);
+        i.upisiRasporedUCsv("arsa", "Implementacija2/src", r);
         i.upisiRasporedUPdf("arsa", "Implementacija1/src", r);
     }
 }
