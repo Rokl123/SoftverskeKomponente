@@ -14,8 +14,6 @@ public class Imp2 implements DodelaTermina {
 
     public boolean preklapanjeTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda,LocalTime pocetak,LocalTime kraj,Termin t) {
         // PERIOD: 23.8.2023 - 20.9.2023 8:15 - 12:00
-
-
             for (LocalDate datum : t.getVremeOdrzavanja()) {
                 if (datum.getDayOfWeek() == day && ( t.getPocetak().toLocalTime() == pocetak || t.getKraj().toLocalTime()==kraj)
                         || (datum.getDayOfWeek()==day && (pocetak.isAfter( t.getPocetak().toLocalTime()) && pocetak.isBefore( t.getKraj().toLocalTime())))){ //Termin koji ima odrzavanja svaki UTORAK u 12:15 do 15:00
@@ -24,7 +22,6 @@ public class Imp2 implements DodelaTermina {
                 }
 
             }
-
 
         if ((t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() == pocetak.getHour()
                 && t.getPocetak().getMinute() == pocetak.getMinute()) ||
@@ -42,7 +39,7 @@ public class Imp2 implements DodelaTermina {
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
             if(t instanceof Termin){
-                if(((Termin) t).getPocetakPerioda().isAfter(pocetak) && ((Termin) t).getKrajPerioda().isBefore(kraj)){
+                if(t.getPocetakPerioda().isAfter(pocetak) && t.getKrajPerioda().isBefore(kraj)){
                     raspored.getTermini().remove(t);
                     System.out.println("Period je uspesno obrisan");
                     return true;
@@ -59,15 +56,15 @@ public class Imp2 implements DodelaTermina {
     public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, LocalTime start, LocalTime end) {
         for (Termin t : r.getTermini()) {
             if (t instanceof Termin) {
-                if (((Termin) t).getPocetakPerioda().isAfter(pocetakPerioda) && ((Termin) t).getKrajPerioda().isBefore(krajPerioda)) {
-                    ((Termin) t).setPocetakPerioda(pocetakPerioda);
-                    ((Termin) t).setKrajPerioda(krajPerioda);
+                if ( t.getPocetakPerioda().isAfter(pocetakPerioda) && ((Termin) t).getKrajPerioda().isBefore(krajPerioda)) {
+                     t.setPocetakPerioda(pocetakPerioda);
+                    t.setKrajPerioda(krajPerioda);
                     LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
                     LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
 
                     while (periodDo.compareTo(krajPerioda) < 0) {
                         if(period.getDayOfWeek() == day) {
-                            ((Termin) t).getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
+                            t.getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
                         }
                         period = period.plusDays(1);
                         periodDo = periodDo.plusDays(1);
@@ -188,18 +185,13 @@ public class Imp2 implements DodelaTermina {
     }
     @Override
     public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p ,String dodatneStvari) {
-
         LocalDateTime ltPocetak = LocalDateTime.ofInstant(r.getFrom().toInstant(), ZoneId.systemDefault()); // u rasporedu period od kad do kad vazi
-
         LocalDateTime ltKraj = LocalDateTime.ofInstant(r.getTo().toInstant(), ZoneId.systemDefault()); // takodje treba dodati i za sate proveru!
-
         LocalTime start = ltPocetak.toLocalTime();
-
         LocalTime end = ltKraj.toLocalTime();
 
         if (pocetakPerioda.isBefore(ltPocetak) || krajPerioda.isAfter(ltKraj) || (pocetakPerioda.isAfter(ltKraj) || krajPerioda.isBefore(ltPocetak))) { //Od 10.10.2023 Do 1.1.2024  odSati 8-21
             //   9.10.2023 Do 1.5.2024
-
             System.out.println("PERIOD JE NEVAZECI!!!");
             return false;
         }
