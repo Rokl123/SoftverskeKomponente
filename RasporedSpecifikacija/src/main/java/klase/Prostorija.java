@@ -8,10 +8,17 @@ public class Prostorija {
 
     private int kapacitet;
 
+    private boolean racunari;
+
 
     public Prostorija(String naziv, int kapacitet) {
         this.naziv = naziv;
         this.kapacitet = kapacitet;
+    }
+    public Prostorija(String naziv, int kapacitet, boolean racunari) {
+        this.naziv = naziv;
+        this.kapacitet = kapacitet;
+        this.racunari = racunari;
     }
 
     public String getNaziv() {
@@ -30,6 +37,13 @@ public class Prostorija {
         this.kapacitet = kapacitet;
     }
 
+    public boolean isRacunari() {
+        return racunari;
+    }
+
+    public void setRacunari(boolean racunari) {
+        this.racunari = racunari;
+    }
 
     @Override
     public String toString() {

@@ -16,22 +16,27 @@ public class Imp1 implements DodelaTermina {
         }
         return false;
     }
-
     @Override
-    public Prostorija dodavanjeProstorijaSaOsobinama(String naziv, int kapacitet) {
-        return new Prostorija(naziv,kapacitet);
-    }
-
-    public boolean isProstorijaZauzeta(Prostorija prostorija, Raspored raspored){
+    public void isProstorijaZauzeta(Prostorija prostorija, Raspored raspored){
         for(Termin t:raspored.getTermini()){
             if(t.getProstorija().equals(prostorija)){
-                System.out.println("Prostorija je zauzeta");
-                return true;
+                System.out.println("Prostorija "+t.getProstorija().getNaziv()+" je zauzeta u terminu "+t.getPocetak().toLocalTime() + " do "+ t.getKraj().toLocalTime());
             }
         }
         System.out.println("Prostorija je slobodna");
-        return false;
     }
+
+    @Override
+    public void isTerminSlobodan(LocalDateTime pocetak1, LocalDateTime kraj1, Raspored raspored) {
+        for(Termin t:raspored.getTermini()){
+            if(t.getPocetak() == pocetak1 && t.getKraj() == kraj1){
+                System.out.println("Zadati termin je zauset");
+            }
+        }
+        System.out.println("Termin je slobodan");
+    }
+
+
 
     @Override // User is typing his start and end
     public Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored) {
@@ -80,7 +85,6 @@ public class Imp1 implements DodelaTermina {
 
     @Override
     public boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
-
         for(Termin t:raspored.getTermini()){
             if(preklapanjeTermina(pocetak,pocetak,t.getPocetak(),t.getKraj())){
                 t.setPocetak(pocetak);
@@ -93,14 +97,18 @@ public class Imp1 implements DodelaTermina {
         return false;
     }
 
+
+
+    //izlistavanje slobodnih termina po ucionicamam i vezanim podacima
     @Override
     public void izlistavanjeSlobodniTermini(String kriterijum, Raspored raspored) {
+
         boolean flag = true;
        //Za dan DATUM je slobodan termin Od ... Do ...
       LocalDateTime pocetniDatum = raspored.getTermini().get(0).getPocetak();
       System.out.println("Za DAN " + pocetniDatum.toLocalDate() + " slobodni termini su: \n");
         for(Termin t:raspored.getTermini()){
-            if(t.getDodatneStvari().containsValue(kriterijum)){
+            if(t.getDodatneStvari().containsValue(kriterijum) || t.getProstorija().getNaziv().equals(kriterijum) ){
                 if(pocetniDatum.getDayOfMonth()!=t.getPocetak().getDayOfMonth()) {
                     System.out.println("Za DAN " + t.getPocetak().toLocalDate() + " slobodni termini su: \n");
                     pocetniDatum = t.getPocetak();
@@ -141,24 +149,26 @@ public class Imp1 implements DodelaTermina {
     }
 
     @Override
-    public void pretrazivanjeVezaniPodaci(String podatak, Raspored raspored) {
-
+    public void izlisatavnjeZauzetihTermina(String podatak, Raspored raspored) {
+        System.out.println("Zauzeti termini za kriterijum: " +podatak);
         for(Termin t:raspored.getTermini()){
             if(t.getDodatneStvari().containsValue(podatak)){
-                //postoji termin
-                System.out.println(t.toString());
-            }
-            else{
-                //pocetak 8:00 kraj 21:00
-                //
-                //slobodan termin
-                System.out.println("Slodoan je");
+                System.out.println("Od "+t.getPocetak().toLocalTime() + " do " + t.getKraj().toLocalTime());
             }
         }
     }
 
     @Override
-    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, LocalTime start, LocalTime end, String dodatneStvari) {
+    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, String dodatneStvari) {
+        return false;
+    }
+    @Override
+    public void isTerminSlobodan(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda) {
+
+    }
+
+    @Override
+    public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, LocalTime start, LocalTime end) {
         return false;
     }
 

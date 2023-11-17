@@ -1,25 +1,11 @@
 [
   {
-    "pocetak": "31-12-2023 15:30:00",
+    "pocetak": "10-08-2023 15:30:00",
     "kraj": "10-10-2023 17:30:00",
     "prostorija": {
       "naziv": "Raf04 (u)",
-      "kapacitet": 13
-    },
-    "dodatneStvari": {
-      "Kompjuteri": "2",
-      "Projektori": "5",
-      "Stolice": "15",
-      "Misovi": "5",
-      "Tastarue": "12"
-    }
-  },
-  {
-    "pocetak": "13-11-2023 14:30:00",
-    "kraj": "01-01-2024 15:30:00",
-    "prostorija": {
-      "naziv": "Raf04 (u)",
-      "kapacitet": 13
+      "kapacitet": 13,
+      "racunari": true
     },
     "dodatneStvari": {
       "Kompjuteri": "2",
