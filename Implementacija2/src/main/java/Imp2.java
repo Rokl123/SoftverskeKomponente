@@ -141,7 +141,12 @@ public class Imp2 implements DodelaTermina {
 
     @Override
     public void isProstorijaZauzeta(Prostorija prostorija, Raspored raspored) {
-
+        for(Termin t:raspored.getTermini()){
+            if(t.getProstorija().equals(prostorija)){
+                System.out.println("Prostorija "+t.getProstorija().getNaziv()+" je zauzeta u terminu "+t.getPocetak().toLocalTime() + " do "+ t.getKraj().toLocalTime());
+            }
+        }
+        System.out.println("Prostorija je slobodna");
     }
 
     @Override
