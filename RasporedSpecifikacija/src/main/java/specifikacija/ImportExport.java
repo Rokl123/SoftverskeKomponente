@@ -266,15 +266,7 @@ public class ImportExport {
                 case "1":
                      header = new String[]{"pocetak", "kraj", "prostorija", "Dodatna Oprema"};
                     csvWriter.writeNext(header);
-
-
                     for (Termin termin : raspored.getTermini()) {
-                        if(termin instanceof Termin){
-                            String[] data2 = {String.valueOf(((Termin) termin).getPocetakPerioda()), String.valueOf(((Termin) termin).getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
-                            csvWriter.writeNext(data2);
-                            continue;
-                        }
-
                         String[] data = {String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                         csvWriter.writeNext(data);
                     }
