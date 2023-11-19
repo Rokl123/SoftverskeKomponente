@@ -10,22 +10,20 @@ import java.util.Map;
 
 public class Termin {
 
-    private LocalDateTime pocetak;
-
-    private LocalDateTime kraj;
-
     private LocalDateTime pocetakPerioda;
 
     private LocalDateTime krajPerioda;
-    private List<LocalDate> vremeOdrzavanja ;
-    private int trajanje;
 
+    private List<LocalDate> vremeOdrzavanja;
+
+    private int trajanje;
 
     private Prostorija prostorija;
 
     private Map<String,String> dodatneStvari;
+
     public Termin(LocalDateTime pocetak, int trajanje, Prostorija prostorija) {
-        this.pocetak = pocetak;
+        this.pocetakPerioda = pocetak;
         this.trajanje = trajanje;
         this.prostorija = prostorija;
     }
@@ -34,7 +32,7 @@ public class Termin {
         this.krajPerioda=krajPerioda;
         vremeOdrzavanja = new ArrayList<>();
         this.prostorija=p;
-        dodatneStvari = new HashMap<>(); dodatneStvari = new HashMap<>();
+        dodatneStvari = new HashMap<>();
     }
 
     public Termin(Map<String, String> dodatneStvari) {
@@ -46,8 +44,8 @@ public class Termin {
     }
 
     public Termin(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Map<String, String> dodatneStvari) {
-        this.pocetak = pocetak;
-        this.kraj = kraj;
+        this.pocetakPerioda = pocetak;
+        this.krajPerioda = kraj;
         this.prostorija = prostorija;
         this.dodatneStvari = dodatneStvari;
     }
@@ -87,28 +85,12 @@ public class Termin {
         this.trajanje = trajanje;
     }
 
-    public LocalDateTime getKraj() {
-        return kraj;
-    }
-
-    public void setKraj(LocalDateTime kraj) {
-        this.kraj = kraj;
-    }
-
-    public LocalDateTime getPocetak() {
-        return pocetak;
-    }
-
     public Prostorija getProstorija() {
         return prostorija;
     }
 
     public void setProstorija(Prostorija prostorija) {
         this.prostorija = prostorija;
-    }
-
-    public void setPocetak(LocalDateTime pocetak) {
-        this.pocetak = pocetak;
     }
 
     public Map<String, String> getDodatneStvari() {

@@ -82,8 +82,8 @@ public class ImportExport {
             List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
             for (Termin termin : sviTermini) {
 
-                LocalDateTime pocetakTermina = termin.getPocetak();
-                LocalDateTime krajTermina = termin.getKraj();
+                LocalDateTime pocetakTermina = termin.getPocetakPerioda();
+                LocalDateTime krajTermina = termin.getKrajPerioda();
                 if (pocetakTermina.toLocalTime().isAfter(vremePocetka) && krajTermina.toLocalTime().isBefore(vremeZavrsetka)) {
                     if (!(izuzetiDani.contains(pocetakTermina.toLocalDate()) || izuzetiDani.contains(krajTermina.toLocalDate()))) {
                         filtriraniTermini.add(termin);
@@ -140,11 +140,11 @@ public class ImportExport {
                         break;
                     case "start":
                         LocalDateTime startDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
-                        termin.setPocetak(startDateTime);
+                        termin.setPocetakPerioda(startDateTime);
                         break;
                     case "end":
                         LocalDateTime endDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
-                        termin.setKraj(endDateTime);
+                        termin.setKrajPerioda(endDateTime);
                         break;
                     case "additional":
                         termin.getDodatneStvari().put(columnName, record.get(columnIndex));
@@ -158,8 +158,8 @@ public class ImportExport {
         List<Termin> filtriraniTermini = new ArrayList<>();
         for (Termin termin : termini) {
 
-            LocalDateTime pocetakTermina = termin.getPocetak();
-            LocalDateTime krajTermina = termin.getKraj();
+            LocalDateTime pocetakTermina = termin.getPocetakPerioda();
+            LocalDateTime krajTermina = termin.getKrajPerioda();
 
             if (pocetakTermina.toLocalTime().isAfter(vremePocetka) && krajTermina.toLocalTime().isBefore(vremeZavrsetka)) {
                 if (!(izuzetiDani.contains(pocetakTermina.toLocalDate()) || izuzetiDani.contains(krajTermina.toLocalDate()))) {
@@ -227,8 +227,8 @@ public class ImportExport {
                     objectMapper.registerModule(new JavaTimeModule());
 
                     List<Termin> rasporedZaPeriod = raspored.getTermini().stream()
-                            .filter(termin -> termin.getKraj().toLocalDate().isAfter(pocetak.minusDays(1))
-                                    && termin.getPocetak().toLocalDate().isBefore(kraj.plusDays(1)))
+                            .filter(termin -> termin.getKrajPerioda().toLocalDate().isAfter(pocetak.minusDays(1))
+                                    && termin.getPocetakPerioda().toLocalDate().isBefore(kraj.plusDays(1)))
                             .collect(Collectors.toList());
 
                     objectMapper.writeValue(new File(outputPath), rasporedZaPeriod);
@@ -242,7 +242,7 @@ public class ImportExport {
                 objectMapper.registerModule(new JavaTimeModule());
 
                 Map<DayOfWeek, List<Termin>> rasporedPoDanima = raspored.getTermini().stream()
-                        .collect(Collectors.groupingBy(termin -> termin.getPocetak().toLocalDate().getDayOfWeek()));
+                        .collect(Collectors.groupingBy(termin -> termin.getPocetakPerioda().toLocalDate().getDayOfWeek()));
                 objectMapper.writeValue(new File(outputPath), rasporedPoDanima);
                 System.out.println("JSON fajl grupisan po danima u nedelji , uspešno kreiran i popunjen.");
             } catch (IOException e) {
@@ -288,10 +288,10 @@ public class ImportExport {
 
             switch (sc.nextLine()){
                 case "1":
-                     header = new String[]{"pocetak", "kraj", "prostorija", "Dodatna Oprema"};
+                     header = new String[]{"pocetak", "kraj", "prostorija", "Dodatne Informacije"};
                     csvWriter.writeNext(header);
                     for (Termin termin : raspored.getTermini()) {
-                        String[] data = {String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                         csvWriter.writeNext(data);
                     }
 
@@ -305,24 +305,24 @@ public class ImportExport {
                     csvWriter.writeNext(header);
 
                     for (Termin termin : raspored.getTermini()) {
-                        LocalDate terminPocetak = LocalDate.from((termin instanceof Termin) ? ((Termin) termin).getPocetakPerioda() : termin.getPocetak());
+                        LocalDate terminPocetak = LocalDate.from((termin instanceof Termin) ? ((Termin) termin).getPocetakPerioda() : termin.getPocetakPerioda());
                         if (terminPocetak.isAfter(pocetak) && terminPocetak.isBefore(kraj)) {
-                            String[] data = {String.valueOf(terminPocetak), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                            String[] data = {String.valueOf(terminPocetak), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                             csvWriter.writeNext(data);
                         }
                     }
                     System.out.println("CSV fajl za period je uspešno kreiran i popunjen.");
                     break;
                 case "3":
-                    header = new String[]{"Dan u nedelji", "pocetak", "kraj", "prostorija", "Dodatna Oprema"};
+                    header = new String[]{"Dan u nedelji", "pocetak", "kraj", "prostorija", "Dodatne Informacije"};
                     csvWriter.writeNext(header);
 
                     Map<DayOfWeek, List<Termin>> rasporedPoDanima = raspored.getTermini().stream()
-                            .collect(Collectors.groupingBy(termin -> termin.getPocetak().getDayOfWeek()));
+                            .collect(Collectors.groupingBy(termin -> termin.getPocetakPerioda().getDayOfWeek()));
 
                     for (Map.Entry<DayOfWeek, List<Termin>> entry : rasporedPoDanima.entrySet()) {
                         for (Termin termin : entry.getValue()) {
-                            String[] data = {entry.getKey().toString(), String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                            String[] data = {entry.getKey().toString(), String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                             csvWriter.writeNext(data);
                         }
                     }
@@ -330,7 +330,7 @@ public class ImportExport {
                     break;
                 case "4":
                     String podatak = sc.nextLine();
-                    header = new String[]{"pocetak", "kraj", "prostorija", "Dodatna Oprema"};
+                    header = new String[]{"pocetak", "kraj", "prostorija", "Dodatne Informacije"};
                     csvWriter.writeNext(header);
 
                     List<Termin> rasporedZaPredmet = raspored.getTermini().stream()
@@ -338,14 +338,14 @@ public class ImportExport {
                             .collect(Collectors.toList());
 
                     for (Termin termin : rasporedZaPredmet) {
-                        String[] data = {String.valueOf(termin.getPocetak()), String.valueOf(termin.getKraj()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
                         csvWriter.writeNext(data);
                     }
 
                     System.out.println("CSV fajl za podatak je uspešno kreiran i popunjen.");
                     break;
                 default:
-                    System.out.println("Losa komda je uneta");
+                    System.out.println("Losa komanda je uneta");
             }
 
 
@@ -374,10 +374,10 @@ public class ImportExport {
 
                     for (Termin termin : raspored.getTermini()) {
 
-                        document.add(new Paragraph("Pocetak: " + termin.getPocetak()));
-                        document.add(new Paragraph("Kraj: " + termin.getKraj()));
+                        document.add(new Paragraph("Pocetak: " + termin.getPocetakPerioda()));
+                        document.add(new Paragraph("Kraj: " + termin.getKrajPerioda()));
                         document.add(new Paragraph("Prostorija: " + termin.getProstorija()));
-                        document.add(new Paragraph("Dodatna oprema: " +termin.getDodatneStvari()));
+                        document.add(new Paragraph("Dodatne informacije: " +termin.getDodatneStvari()));
                     }
 
                     System.out.println("PDF fajl je uspešno kreiran i popunjen.");
@@ -396,12 +396,12 @@ public class ImportExport {
                     document.open();
 
                     for (Termin termin : raspored.getTermini()) {
-                        LocalDate terminPocetak = LocalDate.from((termin instanceof Termin) ? ((Termin) termin).getPocetakPerioda() : termin.getPocetak());
+                        LocalDate terminPocetak = LocalDate.from((termin instanceof Termin) ? ((Termin) termin).getPocetakPerioda() : termin.getPocetakPerioda());
                         if (terminPocetak.isAfter(pocetak) && terminPocetak.isBefore(kraj)) {
                             document.add(new Paragraph("Pocetak: " + terminPocetak));
-                            document.add(new Paragraph("Kraj: " + termin.getKraj()));
+                            document.add(new Paragraph("Kraj: " + termin.getKrajPerioda()));
                             document.add(new Paragraph("Prostorija: " + termin.getProstorija()));
-                            document.add(new Paragraph("Dodatna oprema: " + termin.getDodatneStvari()));
+                            document.add(new Paragraph("Dodatne informacije: " + termin.getDodatneStvari()));
                         }
                     }
 
@@ -418,15 +418,15 @@ public class ImportExport {
                     document.open();
 
                     Map<DayOfWeek, List<Termin>> rasporedPoDanima = raspored.getTermini().stream()
-                            .collect(Collectors.groupingBy(termin -> termin.getPocetak().getDayOfWeek()));
+                            .collect(Collectors.groupingBy(termin -> termin.getPocetakPerioda().getDayOfWeek()));
 
                     for (Map.Entry<DayOfWeek, List<Termin>> entry : rasporedPoDanima.entrySet()) {
                         document.add(new Paragraph("Dan u nedelji: " + entry.getKey()));
                         for (Termin termin : entry.getValue()) {
-                            document.add(new Paragraph("Pocetak: " + termin.getPocetak()));
-                            document.add(new Paragraph("Kraj: " + termin.getKraj()));
+                            document.add(new Paragraph("Pocetak: " + termin.getPocetakPerioda()));
+                            document.add(new Paragraph("Kraj: " + termin.getKrajPerioda()));
                             document.add(new Paragraph("Prostorija: " + termin.getProstorija()));
-                            document.add(new Paragraph("Dodatna oprema: " + termin.getDodatneStvari()));
+                            document.add(new Paragraph("Dodatne informacije: " + termin.getDodatneStvari()));
                         }
                     }
 
@@ -448,10 +448,10 @@ public class ImportExport {
                             .collect(Collectors.toList());
 
                     for (Termin termin : rasporedZaPredmet) {
-                        document.add(new Paragraph("Pocetak: " + termin.getPocetak()));
-                        document.add(new Paragraph("Kraj: " + termin.getKraj()));
+                        document.add(new Paragraph("Pocetak: " + termin.getPocetakPerioda()));
+                        document.add(new Paragraph("Kraj: " + termin.getKrajPerioda()));
                         document.add(new Paragraph("Prostorija: " + termin.getProstorija()));
-                        document.add(new Paragraph("Dodatna oprema: " + termin.getDodatneStvari()));
+                        document.add(new Paragraph("Dodatne informacije: " + termin.getDodatneStvari()));
                     }
 
                     System.out.println("PDF fajl za predmet je uspešno kreiran i popunjen.");
@@ -462,7 +462,7 @@ public class ImportExport {
                 }
                 break;
             default:
-                System.out.println("Losa komda je uneta");
+                System.out.println("Losa komanda je uneta");
         }
 
     }

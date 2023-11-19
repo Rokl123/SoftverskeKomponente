@@ -1,32 +1,42 @@
+package implementation2;
+
+import klase.Manager;
 import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
 import specifikacija.DodelaTermina;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Imp2 implements DodelaTermina {
 
+    static {
+        Imp2 imp2 = new Imp2();
+        Manager.setObject(imp2);
+    }
 
-    public boolean preklapanjeTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda,LocalTime pocetak,LocalTime kraj,Termin t) {
+    private boolean preklapanjeTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda,Termin t) {
         // PERIOD: 23.8.2023 - 20.9.2023 8:15 - 12:00
+        LocalTime pocetak = pocetakPerioda.toLocalTime();
+        LocalTime kraj = krajPerioda.toLocalTime();
+
             for (LocalDate datum : t.getVremeOdrzavanja()) {
-                if (datum.getDayOfWeek() == day && ( t.getPocetak().toLocalTime() == pocetak || t.getKraj().toLocalTime()==kraj)
-                        || (datum.getDayOfWeek()==day && (pocetak.isAfter( t.getPocetak().toLocalTime()) && pocetak.isBefore( t.getKraj().toLocalTime())))){ //Termin koji ima odrzavanja svaki UTORAK u 12:15 do 15:00
+                if (datum.getDayOfWeek() == day && ( t.getPocetakPerioda().toLocalTime() == pocetak || t.getKrajPerioda().toLocalTime()==kraj)
+                        || (datum.getDayOfWeek()==day && (pocetak.isAfter( t.getPocetakPerioda().toLocalTime()) && pocetak.isBefore( t.getKrajPerioda().toLocalTime())))){ //Termin koji ima odrzavanja svaki UTORAK u 12:15 do 15:00
                     System.out.println("Vec postoji termin u zadatom periodu! " + t);
                     return true;
                 }
 
             }
 
-        if ((t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() == pocetak.getHour()
-                && t.getPocetak().getMinute() == pocetak.getMinute()) ||
-                (t.getPocetak().getDayOfWeek() == day && t.getPocetak().getHour() >= pocetak.getHour() && t.getPocetak().getHour()<kraj.getHour()
-                && t.getPocetak().getMinute() == pocetak.getMinute()) && (t.getPocetak().isAfter(pocetakPerioda) && t.getPocetak().isBefore(krajPerioda))) { //Termin 10.12.2023 8:15 TUE    10.11.2023 - 1.1.2024 8:15 TUE
+        if ((t.getPocetakPerioda().getDayOfWeek() == day && t.getPocetakPerioda().getHour() == pocetak.getHour()
+                && t.getPocetakPerioda().getMinute() == pocetak.getMinute()) ||
+                (t.getPocetakPerioda().getDayOfWeek() == day && t.getPocetakPerioda().getHour() >= pocetak.getHour() && t.getPocetakPerioda().getHour()<kraj.getHour()
+                && t.getPocetakPerioda().getMinute() == pocetak.getMinute()) && (t.getPocetakPerioda().isAfter(pocetakPerioda) && t.getPocetakPerioda().isBefore(krajPerioda))) { //Termin 10.12.2023 8:15 TUE    10.11.2023 - 1.1.2024 8:15 TUE
 
             System.out.println("Vec postoji termin u zadatom periodu! " + t);
             return true;
@@ -38,13 +48,11 @@ public class Imp2 implements DodelaTermina {
     @Override
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
-            if(t instanceof Termin){
                 if(t.getPocetakPerioda().isAfter(pocetak) && t.getKrajPerioda().isBefore(kraj)){
                     raspored.getTermini().remove(t);
                     System.out.println("Period je uspesno obrisan");
                     return true;
                 }
-            }
         }
         System.out.println("Period nije obrisan");
         return false;
@@ -53,7 +61,10 @@ public class Imp2 implements DodelaTermina {
 
 
     @Override
-    public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, LocalTime start, LocalTime end) {
+    public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r) {
+        LocalTime start = pocetakPerioda.toLocalTime();
+        LocalTime end = krajPerioda.toLocalTime();
+
         for (Termin t : r.getTermini()) {
                 if ( t.getPocetakPerioda().isAfter(pocetakPerioda) && t.getKrajPerioda().isBefore(krajPerioda)) {
                     Scanner sc = new Scanner(System.in);
@@ -84,54 +95,55 @@ public class Imp2 implements DodelaTermina {
         return false;
     }
 
+
     @Override
     public void izlistavanjeSlobodniTermini(String kriterijum, Raspored raspored) {
         boolean flag = true;
-        LocalDateTime pocetniDatum = raspored.getTermini().get(0).getPocetak();
+        LocalDateTime pocetniDatum = raspored.getTermini().get(0).getPocetakPerioda();
 
         System.out.println("Za DAN " + pocetniDatum.toLocalDate() + " slobodni termini su: \n");
 
         for (Termin t : raspored.getTermini()) {
             if (t.getDodatneStvari().containsValue(kriterijum) || t.getProstorija().getNaziv().equals(kriterijum)) {
-                if (pocetniDatum.getDayOfMonth() != t.getPocetak().getDayOfMonth()) {
-                    System.out.println("Za DAN " + t.getPocetak().toLocalDate() + " slobodni termini su: \n");
-                    pocetniDatum = t.getPocetak();
+                if (pocetniDatum.getDayOfMonth() != t.getPocetakPerioda().getDayOfMonth()) {
+                    System.out.println("Za DAN " + t.getPocetakPerioda().toLocalDate() + " slobodni termini su: \n");
+                    pocetniDatum = t.getPocetakPerioda();
                 }
 
-                if (raspored.getHourFrom() == t.getPocetak().toLocalTime()) {
-                    System.out.println("Od: " + t.getKraj().getHour() + ":" + t.getKraj().getMinute() +
-                            " do " + raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetak().getHour() +
-                            ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetak().getMinute());
+                if (raspored.getHourFrom() == t.getPocetakPerioda().toLocalTime()) {
+                    System.out.println("Od: " + t.getKrajPerioda().getHour() + ":" + t.getKrajPerioda().getMinute() +
+                            " do " + raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetakPerioda().getHour() +
+                            ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetakPerioda().getMinute());
                 } else {
                     try {
                         if (flag) {
                             flag = false;
-                            System.out.println("Od: " + raspored.getHourFrom() + " do: " + t.getPocetak().getHour() +
-                                    ":" + t.getPocetak().getMinute());
-                        } else if (raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetak().getDayOfMonth() != t.getKraj().getDayOfMonth()) {
+                            System.out.println("Od: " + raspored.getHourFrom() + " do: " + t.getPocetakPerioda().getHour() +
+                                    ":" + t.getPocetakPerioda().getMinute());
+                        } else if (raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetakPerioda().getDayOfMonth() != t.getKrajPerioda().getDayOfMonth()) {
                             flag = true;
-                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getMinute() + " do: " +
-                                    raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getMinute());
-                            System.out.println("Od: " + t.getKraj().getHour() + ":" + t.getKraj().getMinute() + " do: " + raspored.getHourTo());
-                        } else if (raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetak().toLocalTime() != t.getKraj().toLocalTime()) {
-                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getMinute() + " do: " +
-                                    raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetak().getMinute());
+                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getMinute() + " do: " +
+                                    raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetakPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetakPerioda().getMinute());
+                            System.out.println("Od: " + t.getKrajPerioda().getHour() + ":" + t.getKrajPerioda().getMinute() + " do: " + raspored.getHourTo());
+                        } else if (raspored.getTermini().get(raspored.getTermini().indexOf(t) + 1).getPocetakPerioda().toLocalTime() != t.getKrajPerioda().toLocalTime()) {
+                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getMinute() + " do: " +
+                                    raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetakPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t)).getPocetakPerioda().getMinute());
                         } else {
-                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getPocetak().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getPocetak().getMinute() +
-                                    " do: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getHour() +
-                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKraj().getMinute());
+                            System.out.println("Od: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getPocetakPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getPocetakPerioda().getMinute() +
+                                    " do: " + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getHour() +
+                                    ":" + raspored.getTermini().get(raspored.getTermini().indexOf(t) - 1).getKrajPerioda().getMinute());
                         }
                     } catch (IndexOutOfBoundsException exc) {
-                        System.out.println("Od: " + raspored.getHourFrom() + " do: " + t.getPocetak().getHour() + ":" + t.getPocetak().getMinute());
+                        System.out.println("Od: " + raspored.getHourFrom() + " do: " + t.getPocetakPerioda().getHour() + ":" + t.getPocetakPerioda().getMinute());
                     }
 
                     if (raspored.getTermini().indexOf(t) + 1 == raspored.getTermini().size()) {
-                        System.out.println("Od: " + t.getKraj().getHour() + ":" + t.getKraj().getMinute() +
+                        System.out.println("Od: " + t.getKrajPerioda().getHour() + ":" + t.getKrajPerioda().getMinute() +
                                 " do: " + raspored.getHourTo() + "\n");
                     }
                 }
@@ -143,16 +155,25 @@ public class Imp2 implements DodelaTermina {
     public void isProstorijaZauzeta(Prostorija prostorija, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
             if(t.getProstorija().equals(prostorija)){
-                System.out.println("Prostorija "+t.getProstorija().getNaziv()+" je zauzeta u terminu "+t.getPocetak().toLocalTime() + " do "+ t.getKraj().toLocalTime());
+                System.out.println("Prostorija "+t.getProstorija().getNaziv()+" je zauzeta u terminu "+t.getPocetakPerioda().toLocalTime() + " do "+ t.getKrajPerioda().toLocalTime());
             }
         }
         System.out.println("Prostorija je slobodna");
     }
 
+    // Korisnik unosi period
     @Override
-    public void isTerminSlobodan(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda) {
-
+    public void isTerminSlobodan(LocalDateTime pocetak1, LocalDateTime kraj1, Raspored raspored) {
+        for(Termin t:raspored.getTermini()){
+            if((t.getPocetakPerioda().isAfter(pocetak1) || t.getPocetakPerioda()==pocetak1) && (t.getKrajPerioda() == kraj1 || t.getKrajPerioda().isBefore(kraj1))){
+                System.out.println("Zadati termin je zauzet");
+            }
+        }
+        System.out.println("Termin je slobodan");
     }
+
+
+
 
     @Override
     public void izlisatavnjeZauzetihTermina(String podatak, Raspored raspored) {
@@ -160,10 +181,11 @@ public class Imp2 implements DodelaTermina {
         for(Termin t : raspored.getTermini()){
             mapaStvari = t.getDodatneStvari();
             if(mapaStvari.containsValue(podatak) || t.getDodatneStvari().containsValue(podatak)){
-                long period = ChronoUnit.DAYS.between(t.getPocetak().toLocalDate(),t.getKraj().toLocalDate());
-                System.out.println("Za period: " +t.getPocetak().toLocalDate() +" do " +t.getKraj().toLocalDate() +" u vremenu: "+t.getPocetak().toLocalTime() + " do + "+t.getKraj().toLocalTime()+ " danom " +t.getPocetak().getDayOfWeek());
+
+                long period = ChronoUnit.DAYS.between(t.getPocetakPerioda().toLocalDate(),t.getKrajPerioda().toLocalDate());
+                System.out.println("Za period: " +t.getPocetakPerioda().toLocalDate() +" do " +t.getKrajPerioda().toLocalDate() +" u vremenu: "+t.getPocetakPerioda().toLocalTime() + " do + "+t.getKrajPerioda().toLocalTime()+ " danom " +t.getPocetakPerioda().getDayOfWeek());
                 for(int i = 1;i<period/7;i++){
-                    System.out.println(t.getPocetak().toLocalDate().plusDays(i*7));
+                    System.out.println(t.getPocetakPerioda().toLocalDate().plusDays(i*7));
                 }
             }
         }
@@ -201,7 +223,7 @@ public class Imp2 implements DodelaTermina {
 
         for (Termin t : r.getTermini()) {
             //Ako termin ima isti dan, isti sat i iste minute i da je izmedju pocetka perioda i kraja onda ne mozemo da napravimo periodicni termin
-           if(preklapanjeTermina(day,pocetakPerioda,krajPerioda,start,end,t)){
+           if(preklapanjeTermina(day,pocetakPerioda,krajPerioda,t)){
                return false;
            }
 
@@ -210,8 +232,8 @@ public class Imp2 implements DodelaTermina {
         LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
         LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
         Termin tP = new Termin(pocetakPerioda,krajPerioda,p);
-        tP.setPocetak(pocetakPerioda);
-        tP.setKraj(krajPerioda);
+        tP.setPocetakPerioda(pocetakPerioda);
+        tP.setKrajPerioda(krajPerioda);
         while (periodDo.compareTo(krajPerioda) < 0) {
             if(period.getDayOfWeek() == day) {
                 tP.getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
@@ -226,25 +248,11 @@ public class Imp2 implements DodelaTermina {
     }
 
     @Override
-    public Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored) {
-        return null;
-    }
-    @Override
-    public boolean preklapanjeTermina(LocalDateTime pocetak1, LocalDateTime kraj1, LocalDateTime pocetak2, LocalDateTime kraj2) {
-        return false;
-    }
-    @Override
     public Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija, Raspored raspored) {
         return null;
     }
-    @Override
-    public void isTerminSlobodan(LocalDateTime pocetak1, LocalDateTime kraj1, Raspored raspored) {
 
-    }
-    @Override
-    public boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
-        return false;
-    }
+
 
 
 }

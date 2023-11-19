@@ -7,12 +7,10 @@ import klase.Termin;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Map;
 
 public interface DodelaTermina {
 
-    boolean preklapanjeTermina(LocalDateTime pocetak1,LocalDateTime kraj1,LocalDateTime pocetak2,LocalDateTime kraj2);
-
-    Termin kreirajTerminUzPk(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Raspored raspored);
 
     boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, String dodatneStvari);
 
@@ -20,8 +18,7 @@ public interface DodelaTermina {
 
     boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored);
 
-    boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored);
-    boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, LocalTime start, LocalTime end);
+    boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r);
 
 
     void izlistavanjeSlobodniTermini(String kriterijum,Raspored raspored);
@@ -32,6 +29,5 @@ public interface DodelaTermina {
 
     void isTerminSlobodan(LocalDateTime pocetak1,LocalDateTime kraj1, Raspored raspored);
 
-    void isTerminSlobodan(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda);
 
 }

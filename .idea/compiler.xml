@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="SoftverskeKomponente1" />
         <module name="RasporedSpecifikacija" />
         <module name="Implementacija1" />
         <module name="TestAplikacija" />

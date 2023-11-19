@@ -1,7 +1,7 @@
 [
   {
-    "pocetak": "10-08-2023 15:30:00",
-    "kraj": "10-10-2023 17:30:00",
+    "pocetakPerioda": "10-08-2023 15:30:00",
+    "krajPerioda": "10-10-2023 17:30:00",
     "prostorija": {
       "naziv": "Raf04 (u)",
       "kapacitet": 13,

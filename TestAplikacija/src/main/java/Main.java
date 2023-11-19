@@ -1,11 +1,12 @@
+
+import klase.Manager;
 import klase.Prostorija;
 import klase.Raspored;
 import specifikacija.ImportExport;
-import specifikacija.LocalDateTimeTypeAdapter;
 
-import java.time.LocalDate;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,7 +41,9 @@ public class Main {
             System.out.println("Unesite ime fajla do prostorija");
             String fajl = sc.nextLine();
             prostorije = ie.ucitajProstorije(fajl);
-        Imp1 imp1 = new Imp1();
+
+      Class.forName("implementation2.Imp2");
+
 
         boolean flag = true;
 
@@ -59,35 +62,82 @@ public class Main {
                     System.out.println("Unesite kriterijum po kome pretrazujete raspore: ");
                     String kriterijum = sc.nextLine();
                     System.out.println("Zauzeti termini");
-                    imp1.izlisatavnjeZauzetihTermina(kriterijum,raspored);
+                    Manager.getObject().izlisatavnjeZauzetihTermina(kriterijum,raspored);
                     System.out.println("Slobodni termini termini");
-                    imp1.izlistavanjeSlobodniTermini(kriterijum,raspored);
+                    Manager.getObject().izlistavanjeSlobodniTermini(kriterijum,raspored);
                     break;
                 case "2":
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm");
                     System.out.println("Unesite pocetak termina: ");
-                    LocalDateTime pocetak = LocalDateTime.parse(sc.nextLine());
+                    LocalDateTime pocetak = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite kraj termina: ");
-                    LocalDateTime kraj = LocalDateTime.parse(sc.nextLine());
+                    LocalDateTime kraj = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite naziv prostorije ");
                     String naziv = sc.nextLine();
                     System.out.println("Unesite kapacitet prostorije ");
                     String kapacitet = sc.nextLine();
                     Prostorija prostorija = new Prostorija(naziv,Integer.parseInt(kapacitet));
-                    imp1.kreirajTerminUzPk(pocetak,kraj,prostorija,raspored);
+                    System.out.println("Unesite dodatne informacije o terminu u obliku KEY:VALUE : ");
+                    String dodatneInfo = sc.nextLine();
+                    System.out.println("Unesite dan zadatog termina: ");
+                    String dan = sc.nextLine();
+                    DayOfWeek day = pocetak.getDayOfWeek();
+                    switch(dan){
+                        case "PON":
+                            day=DayOfWeek.MONDAY;
+                        case "UTO":
+                            day=DayOfWeek.TUESDAY;
+                        case "SRE":
+                            day=DayOfWeek.WEDNESDAY;
+                        case "CET":
+                            day=DayOfWeek.THURSDAY;
+                        case "PET":
+                            day=DayOfWeek.FRIDAY;
+                        case "SUB":
+                            day=DayOfWeek.SATURDAY;
+                        case "NED":
+                            day=DayOfWeek.SUNDAY;
+                        default:
+                            day = pocetak.getDayOfWeek();
+                    }
+
+
+                    Manager.getObject().kreirajTerminUzPk(day,pocetak,kraj,raspored,prostorija,dodatneInfo);
                     break;
                 case "3":
                     System.out.println("Unesite pocetak termina trenutnog termina: ");
                     LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
                     System.out.println("Unesite kraj termina trenutnog termina: ");
                     LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
-                    imp1.premestajTermina(pocetak1,kraj1,raspored);
+                    System.out.println("Unesite dan zadatog termina: ");
+                    String dan1 = sc.nextLine();
+                    DayOfWeek day1 = pocetak1.getDayOfWeek();
+                    switch(dan1){
+                        case "PON":
+                            day1=DayOfWeek.MONDAY;
+                        case "UTO":
+                            day1=DayOfWeek.TUESDAY;
+                        case "SRE":
+                            day1=DayOfWeek.WEDNESDAY;
+                        case "CET":
+                            day1=DayOfWeek.THURSDAY;
+                        case "PET":
+                            day1=DayOfWeek.FRIDAY;
+                        case "SUB":
+                            day1=DayOfWeek.SATURDAY;
+                        case "NED":
+                            day1=DayOfWeek.SUNDAY;
+                        default:
+                            day1 = pocetak1.getDayOfWeek();
+                    }
+                    Manager.getObject().premestajTermina(day1,pocetak1,kraj1,raspored);
                     break;
                 case "4":
                     System.out.println("Unesite pocetak termina za brisanje: ");
                     LocalDateTime pocetak2 = LocalDateTime.parse(sc.nextLine());
                     System.out.println("Unesite kraj termina za brisanje : ");
                     LocalDateTime kraj2 = LocalDateTime.parse(sc.nextLine());
-                    imp1.brisanjeTermina(pocetak2,kraj2,raspored);
+                    Manager.getObject().brisanjeTermina(pocetak2,kraj2,raspored);
                     break;
                 case "5":
                     System.out.println("1. Upisivanje preko csv-a:");
