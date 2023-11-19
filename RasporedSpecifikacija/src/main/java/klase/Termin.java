@@ -24,13 +24,17 @@ public class Termin {
     private Prostorija prostorija;
 
     private Map<String,String> dodatneStvari;
-
+    public Termin(LocalDateTime pocetak, int trajanje, Prostorija prostorija) {
+        this.pocetak = pocetak;
+        this.trajanje = trajanje;
+        this.prostorija = prostorija;
+    }
     public Termin(LocalDateTime pocetakPerioda,LocalDateTime krajPerioda,Prostorija p){
         this.pocetakPerioda = pocetakPerioda;
         this.krajPerioda=krajPerioda;
         vremeOdrzavanja = new ArrayList<>();
         this.prostorija=p;
-        dodatneStvari = new HashMap<>();
+        dodatneStvari = new HashMap<>(); dodatneStvari = new HashMap<>();
     }
 
     public Termin(Map<String, String> dodatneStvari) {
@@ -40,12 +44,6 @@ public class Termin {
     public Termin() {
         dodatneStvari = new HashMap<>();
     }
-
-//    public Termin(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija) {
-//        this.pocetak = pocetak;
-//        this.kraj = kraj;
-//        this.prostorija = prostorija;
-//    }
 
     public Termin(LocalDateTime pocetak, LocalDateTime kraj, Prostorija prostorija, Map<String, String> dodatneStvari) {
         this.pocetak = pocetak;
@@ -66,11 +64,7 @@ public class Termin {
         this.vremeOdrzavanja = vremeOdrzavanja;
     }
 
-    public Termin(LocalDateTime pocetak, int trajanje, Prostorija prostorija) {
-        this.pocetak = pocetak;
-        this.trajanje = trajanje;
-        this.prostorija = prostorija;
-    }
+
 
 
     public LocalDateTime getPocetakPerioda() {
@@ -129,8 +123,8 @@ public class Termin {
     @Override
     public String toString() {
         return "Termin{" +
-                "pocetak=" + pocetak +
-                ", kraj=" + kraj +
+                "pocetak=" + pocetakPerioda +
+                ", kraj=" + krajPerioda +
                 ", trajanje=" + trajanje +
                 ", prostorija=" + prostorija +
                 ", dodatneStvari=" + dodatneStvari +

@@ -3,9 +3,11 @@ import klase.Raspored;
 import klase.Termin;
 import specifikacija.DodelaTermina;
 
+import java.sql.SQLOutput;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Scanner;
 
 public class Imp1 implements DodelaTermina {
 
@@ -57,8 +59,6 @@ public class Imp1 implements DodelaTermina {
 
     @Override
     public Termin kreirajTerminPt(LocalDateTime pocetak, int trajanje, Prostorija prostorija, Raspored raspored) {
-        // ako se termini preklapaju onda ne moze da se kreira novi raposred
-        // tada baciti exception sa porukicom
         for(Termin t:raspored.getTermini()){
             if(!preklapanjeTermina(pocetak,pocetak.plusHours(trajanje/60).minusMinutes(trajanje%60),t.getPocetak(),t.getKraj())){
                 System.out.println("Termin je uspesno kreiran");
@@ -86,9 +86,14 @@ public class Imp1 implements DodelaTermina {
     @Override
     public boolean premestajTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
-            if(preklapanjeTermina(pocetak,pocetak,t.getPocetak(),t.getKraj())){
-                t.setPocetak(pocetak);
-                t.setKraj(kraj);
+            if(preklapanjeTermina(pocetak,kraj,t.getPocetak(),t.getKraj())){
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Unesite novi pocetak");
+                LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
+                System.out.println("Unesite novi kraj");
+                LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
+                t.setPocetak(pocetak1);
+                t.setKraj(kraj1);
                 System.out.println("Termin je uspesno promenjen");
                 return true;
             }
@@ -110,7 +115,7 @@ public class Imp1 implements DodelaTermina {
         for(Termin t:raspored.getTermini()){
             if(t.getDodatneStvari().containsValue(kriterijum) || t.getProstorija().getNaziv().equals(kriterijum) ){
                 if(pocetniDatum.getDayOfMonth()!=t.getPocetak().getDayOfMonth()) {
-                    System.out.println("Za DAN " + t.getPocetak().toLocalDate() + " slobodni termini su: \n");
+                    System.out.println("Za DAN " + t.getPocetak().toLocalDate() + " slobodni termini su:");
                     pocetniDatum = t.getPocetak();
                 }
                 if(raspored.getHourFrom() == t.getPocetak().toLocalTime()){
@@ -139,7 +144,7 @@ public class Imp1 implements DodelaTermina {
                         System.out.println("Od: "+ raspored.getHourFrom() + " do: " +t.getPocetak().getHour() + ":"+t.getPocetak().getMinute());
                     }
 
-                    if(raspored.getTermini().indexOf(t) +1 == raspored.getTermini().size()){
+                    if(raspored.getTermini().indexOf(t) == raspored.getTermini().size()){
                         System.out.println("Od: "+t.getKraj().getHour() + ":" +t.getKraj().getMinute() +" do: "+ raspored.getHourTo()+"\n");
                     }
                 }

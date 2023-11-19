@@ -1,13 +1,13 @@
 import klase.Prostorija;
 import klase.Raspored;
 import klase.Termin;
-import klase.Termin;
 import specifikacija.DodelaTermina;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Imp2 implements DodelaTermina {
 
@@ -55,10 +55,14 @@ public class Imp2 implements DodelaTermina {
     @Override
     public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, LocalTime start, LocalTime end) {
         for (Termin t : r.getTermini()) {
-            if (t instanceof Termin) {
-                if ( t.getPocetakPerioda().isAfter(pocetakPerioda) && ((Termin) t).getKrajPerioda().isBefore(krajPerioda)) {
-                     t.setPocetakPerioda(pocetakPerioda);
-                    t.setKrajPerioda(krajPerioda);
+                if ( t.getPocetakPerioda().isAfter(pocetakPerioda) && t.getKrajPerioda().isBefore(krajPerioda)) {
+                    Scanner sc = new Scanner(System.in);
+                    System.out.println("Unesite novi pocetak");
+                    LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
+                    System.out.println("Unesite novi kraj");
+                    LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
+                     t.setPocetakPerioda(pocetak1);
+                    t.setKrajPerioda(kraj1);
                     LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
                     LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
 
@@ -74,7 +78,6 @@ public class Imp2 implements DodelaTermina {
                     System.out.println("Period je uspesno promenjen");
                     return true;
                 }
-            }
 
         }
         System.out.println("Period nije promenjen");

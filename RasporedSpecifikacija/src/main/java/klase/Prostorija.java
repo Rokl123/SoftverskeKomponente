@@ -47,6 +47,6 @@ public class Prostorija {
 
     @Override
     public String toString() {
-        return naziv + " " + kapacitet;
+        return naziv + " " + kapacitet + " "+ racunari;
     }
 }

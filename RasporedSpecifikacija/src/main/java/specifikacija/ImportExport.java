@@ -52,6 +52,28 @@ public class ImportExport {
         }
     }
 
+    public List<Prostorija> ucitajProstorije(String putanjaDoFajla) {
+        List<Prostorija> prostorije = new ArrayList<>();
+
+        try (CSVReader reader = new CSVReader(new FileReader(putanjaDoFajla))) {
+            String[] header = reader.readNext(); // Uzmi zaglavlje
+            String[] line;
+
+            while ((line = reader.readNext()) != null) {
+                String imeProstorije = line[0];
+                int kapacitet = Integer.parseInt(line[1]);
+                boolean imaLiracunare = Boolean.parseBoolean(line[2]);
+
+                Prostorija prostorija = new Prostorija(imeProstorije, kapacitet, imaLiracunare);
+                prostorije.add(prostorija);
+            }
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Fajl uspesno ucitan");
+        return prostorije;
+    }
+
     public List<Termin> ucitajRasporedJson(String fileName) {
         List<Termin> filtriraniTermini = new ArrayList<>();
 
@@ -77,6 +99,7 @@ public class ImportExport {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Fajl uspesno ucitan");
         return filtriraniTermini;
     }
 
@@ -150,6 +173,7 @@ public class ImportExport {
                 System.out.println("Vreme nije dobro");
             }
         }
+        System.out.println("Fajl uspesno ucitan");
         return filtriraniTermini;
     }
 
