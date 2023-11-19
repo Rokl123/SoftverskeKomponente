@@ -78,8 +78,7 @@ public class ImportExport {
         List<Termin> filtriraniTermini = new ArrayList<>();
 
         try {
-            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
-            List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();            List<Termin> sviTermini = gson.fromJson(new FileReader(fileName), new TypeToken<List<Termin>>(){}.getType());
             for (Termin termin : sviTermini) {
 
                 LocalDateTime pocetakTermina = termin.getPocetakPerioda();
@@ -291,7 +290,7 @@ public class ImportExport {
                      header = new String[]{"pocetak", "kraj", "prostorija", "Dodatne Informacije"};
                     csvWriter.writeNext(header);
                     for (Termin termin : raspored.getTermini()) {
-                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), String.valueOf(termin.getProstorija()), String.valueOf(termin.getDodatneStvari())};
                         csvWriter.writeNext(data);
                     }
 
@@ -322,7 +321,7 @@ public class ImportExport {
 
                     for (Map.Entry<DayOfWeek, List<Termin>> entry : rasporedPoDanima.entrySet()) {
                         for (Termin termin : entry.getValue()) {
-                            String[] data = {entry.getKey().toString(), String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                            String[] data = {entry.getKey().toString(), String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), String.valueOf(termin.getProstorija()), String.valueOf(termin.getDodatneStvari())};
                             csvWriter.writeNext(data);
                         }
                     }
@@ -338,7 +337,7 @@ public class ImportExport {
                             .collect(Collectors.toList());
 
                     for (Termin termin : rasporedZaPredmet) {
-                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), termin.getProstorija().getNaziv(), String.valueOf(termin.getDodatneStvari())};
+                        String[] data = {String.valueOf(termin.getPocetakPerioda()), String.valueOf(termin.getKrajPerioda()), String.valueOf(termin.getProstorija()), String.valueOf(termin.getDodatneStvari())};
                         csvWriter.writeNext(data);
                     }
 

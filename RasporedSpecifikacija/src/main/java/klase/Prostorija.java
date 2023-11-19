@@ -1,13 +1,15 @@
 package klase;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.List;
 
 public class Prostorija {
-
+    @Expose
     private String naziv;
-
+    @Expose
     private int kapacitet;
-
+    @Expose
     private boolean racunari;
 
 

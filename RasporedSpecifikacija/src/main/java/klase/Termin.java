@@ -1,5 +1,7 @@
 package klase;
 
+import com.google.gson.annotations.Expose;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,17 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 public class Termin {
-
+    @Expose
     private LocalDateTime pocetakPerioda;
-
+    @Expose
     private LocalDateTime krajPerioda;
-
+    @Expose
     private List<LocalDate> vremeOdrzavanja;
-
     private int trajanje;
-
+    @Expose
     private Prostorija prostorija;
-
+    @Expose
     private Map<String,String> dodatneStvari;
 
     public Termin(LocalDateTime pocetak, int trajanje, Prostorija prostorija) {
