@@ -14,8 +14,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        //String putanjaDoIzuzetihDana = args[0];
-        String putanjaDoIzuzetihDana = "C:\\Users\\Arsa\\IdeaProjects\\SoftverskeKomponente6\\izuzetiDatumi.txt";
+        String putanjaDoIzuzetihDana = args[0];
+
         Raspored raspored = new Raspored();
         ImportExport ie = new ImportExport(raspored.getHourFrom(),raspored.getHourTo(),putanjaDoIzuzetihDana);
         raspored.setIzuzetiDani(ie.getIzuzetiDani());
