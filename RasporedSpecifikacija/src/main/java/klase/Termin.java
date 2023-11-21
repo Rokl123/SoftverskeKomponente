@@ -111,6 +111,6 @@ public class Termin {
                 ", trajanje=" + trajanje +
                 ", prostorija=" + prostorija +
                 ", dodatneStvari=" + dodatneStvari +
-                '}';
+                '}' + '\n';
     }
 }

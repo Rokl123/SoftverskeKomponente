@@ -1,3 +1,4 @@
+package mainpackage;
 
 import klase.Manager;
 import klase.Prostorija;
@@ -13,14 +14,17 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-
+        //String putanjaDoIzuzetihDana = args[0];
+        String putanjaDoIzuzetihDana = "C:\\Users\\Arsa\\IdeaProjects\\SoftverskeKomponente6\\izuzetiDatumi.txt";
         Raspored raspored = new Raspored();
-        ImportExport ie = new ImportExport(raspored.getHourFrom(),raspored.getHourTo());
-
+        ImportExport ie = new ImportExport(raspored.getHourFrom(),raspored.getHourTo(),putanjaDoIzuzetihDana);
+        raspored.setIzuzetiDani(ie.getIzuzetiDani());
         Scanner sc = new Scanner(System.in);
         System.out.println("Ucitavanje fajlova:");
         System.out.println("1. Ucitavanje preko csv:");
         System.out.println("2. Ucitavanje preko json-a:");
+
+        Class.forName("implementation2.Imp2");
 
             switch (sc.nextLine()) {
                 case "1":
@@ -28,7 +32,7 @@ public class Main {
                     String fajl = sc.nextLine();
                     System.out.println("Unesite putanju do config fajla");
                     String config = sc.nextLine();
-                    raspored.setTermini(ie.ucitajRasporedCsv(fajl,config));
+                    raspored.setTermini(ie.ucitajRasporedCsv(fajl, config));
                     break;
                 case "2":
                     System.out.println("Unesite putanju do fajla");
@@ -36,25 +40,24 @@ public class Main {
                     raspored.setTermini(ie.ucitajRasporedJson(fajl1));
                     break;
             }
-        List<Prostorija> prostorije = new ArrayList<>();
+        List<Prostorija> prostorije ;
 
             System.out.println("Unesite ime fajla do prostorija");
             String fajl = sc.nextLine();
             prostorije = ie.ucitajProstorije(fajl);
 
-      Class.forName("implementation2.Imp2");
-
 
         boolean flag = true;
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.uuuu HH:mm");
         while(flag){
             System.out.println("Rad sa rasporedom:");
             System.out.println("1. Pretrazivanje rasporeda po kriterijumima:");
             System.out.println("2. Kreiranje termina:");
             System.out.println("3. Promena termina:");
-            System.out.println("4. Obrisis termin:");
+            System.out.println("4. Obrisi termin:");
             System.out.println("5. Snimi fajl:");
             System.out.println("6. Izlistaj sve prostorije:");
+            System.out.println("7. Ispisi ceo raspored");
             System.out.println("0. Zavrsetak programa:");
 
             switch (sc.nextLine()){
@@ -67,7 +70,7 @@ public class Main {
                     Manager.getObject().izlistavanjeSlobodniTermini(kriterijum,raspored);
                     break;
                 case "2":
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm");
+
                     System.out.println("Unesite pocetak termina: ");
                     LocalDateTime pocetak = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite kraj termina: ");
@@ -106,9 +109,9 @@ public class Main {
                     break;
                 case "3":
                     System.out.println("Unesite pocetak termina trenutnog termina: ");
-                    LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
+                    LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite kraj termina trenutnog termina: ");
-                    LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
+                    LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite dan zadatog termina: ");
                     String dan1 = sc.nextLine();
                     DayOfWeek day1 = pocetak1.getDayOfWeek();
@@ -133,10 +136,11 @@ public class Main {
                     Manager.getObject().premestajTermina(day1,pocetak1,kraj1,raspored);
                     break;
                 case "4":
-                    System.out.println("Unesite pocetak termina za brisanje: ");
-                    LocalDateTime pocetak2 = LocalDateTime.parse(sc.nextLine());
-                    System.out.println("Unesite kraj termina za brisanje : ");
-                    LocalDateTime kraj2 = LocalDateTime.parse(sc.nextLine());
+
+                    System.out.println("Unesite pocetak perioda vremena za brisanje termina: ");
+                    LocalDateTime pocetak2 = LocalDateTime.parse(sc.nextLine(),formatter);
+                    System.out.println("Unesite kraj perioda vremena za brisanje : ");
+                    LocalDateTime kraj2 = LocalDateTime.parse(sc.nextLine(),formatter);
                     Manager.getObject().brisanjeTermina(pocetak2,kraj2,raspored);
                     break;
                 case "5":
@@ -174,6 +178,9 @@ public class Main {
                     for (Prostorija p:prostorije){
                         System.out.println(p.toString());
                     }
+                    break;
+                case "7":
+                    System.out.println(raspored);
                     break;
                 case "0":
                     flag = false;

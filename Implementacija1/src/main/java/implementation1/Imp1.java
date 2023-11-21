@@ -1,5 +1,7 @@
 package implementation1;
 
+import exceptions.DatumUIzuzetomDanuException;
+import exceptions.TerminJeZauzetException;
 import klase.Manager;
 import klase.Prostorija;
 import klase.Raspored;
@@ -9,6 +11,7 @@ import specifikacija.DodelaTermina;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -22,9 +25,13 @@ public class Imp1 implements DodelaTermina {
 
 
     private boolean preklapanjeTermina(LocalDateTime pocetak1, LocalDateTime kraj1, LocalDateTime pocetak2, LocalDateTime kraj2) {
-        if (pocetak1.isBefore(kraj2) && kraj1.isAfter(pocetak2)) {
+        if (pocetak1.toLocalDate().isBefore(kraj2.toLocalDate()) && kraj1.toLocalDate().isAfter(pocetak2.toLocalDate())) {
             return true;
         }
+        else if(pocetak1.isEqual(pocetak2) && kraj1.isEqual(kraj2)){
+            return true;
+        }
+
         return false;
     }
 
@@ -51,18 +58,21 @@ public class Imp1 implements DodelaTermina {
 
 
     private void addAdditional(Map<String,String> dodatneStvari,String s){
+        if(s.isEmpty()){
 
-        String[] info = s.split(","); //Znaci string izgleda kao : Profesor:Arsenije Petrovic,Racunar=DA,Predmet="UUP"
-
-        String finale = "";
-        int i=0;
-        while(i < info.length){
-            finale = info[i]; // Profesor:Arsenije Petrovic
-            String[] keyValue = finale.split(":");
-            dodatneStvari.put(keyValue[0],keyValue[1]);
-            i++;
         }
+        else {
+            String[] info = s.split(","); //Znaci string izgleda kao : Profesor:Arsenije Petrovic,Racunar=DA,Predmet="UUP"
 
+            String finale = "";
+            int i = 0;
+            while (i < info.length) {
+                finale = info[i]; // Profesor:Arsenije Petrovic
+                String[] keyValue = finale.split(":");
+                dodatneStvari.put(keyValue[0], keyValue[1]);
+                i++;
+            }
+        }
     }
 
     @Override
@@ -81,7 +91,7 @@ public class Imp1 implements DodelaTermina {
     @Override
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
         for(Termin t:raspored.getTermini()){
-            if(preklapanjeTermina(pocetak,pocetak,t.getPocetakPerioda(),t.getKrajPerioda())){
+            if(preklapanjeTermina(pocetak,kraj,t.getPocetakPerioda(),t.getKrajPerioda())){
                 raspored.getTermini().remove(t);
                 System.out.println("Termin je uspesno obrisan");
                 return true;
@@ -93,15 +103,14 @@ public class Imp1 implements DodelaTermina {
 
     @Override
     public boolean premestajTermina(DayOfWeek day,LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
-        //PON UTO SRE CET PET SUB NED
-        // pocetak.getDayOfWeek()
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.uuuu H:mm");
         for(Termin t:raspored.getTermini()){
             if(preklapanjeTermina(pocetak,kraj,t.getPocetakPerioda(),t.getKrajPerioda())){
                 Scanner sc = new Scanner(System.in);
                 System.out.println("Unesite novi pocetak");
-                LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
+                LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine(),formatter);
                 System.out.println("Unesite novi kraj");
-                LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
+                LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine(),formatter);
                 t.setPocetakPerioda(pocetak1);
                 t.setKrajPerioda(kraj1);
                 System.out.println("Termin je uspesno promenjen");
@@ -174,11 +183,19 @@ public class Imp1 implements DodelaTermina {
     }
 
     @Override
-    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, String dodatneStvari) {
+    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p, String dodatneStvari) throws Exception {
         Map<String, String> mapaDodatnihInfo = new HashMap<>();
         addAdditional(mapaDodatnihInfo,dodatneStvari);
-        for(Termin t:r.getTermini()){
 
+        if(pocetakPerioda.toLocalDate().isBefore(r.getFrom())){
+            throw new DatumUIzuzetomDanuException();
+        }
+
+        if(r.getIzuzetiDani().contains(pocetakPerioda.toLocalDate())){
+            throw new DatumUIzuzetomDanuException();
+        }
+
+        for(Termin t:r.getTermini()){
             if(!preklapanjeTermina(pocetakPerioda,krajPerioda,t.getPocetakPerioda(),t.getKrajPerioda())){
                 System.out.println("Termin je uspesno kreiran");
                 Termin noviT = new Termin(pocetakPerioda,krajPerioda,p);
@@ -186,10 +203,9 @@ public class Imp1 implements DodelaTermina {
                 r.getTermini().add(noviT);
                 return true;
             }
-
         }
-        System.out.println("Ovaj termin je zauzet, tako da termin u datim vrememnima ne moze biti kreiran");
-        return false;
+        throw new TerminJeZauzetException();
+
     }
 
 

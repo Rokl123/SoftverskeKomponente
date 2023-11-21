@@ -32,9 +32,10 @@ public class ImportExport {
     LocalTime vremeZavrsetka;
     List<LocalDate> izuzetiDani = new ArrayList<>();
 
-    public ImportExport(LocalTime vremePocetka,LocalTime vremeZavrsetka) {
+    public ImportExport(LocalTime vremePocetka,LocalTime vremeZavrsetka,String putanjaDoIzuzetihDana) {
         this.vremeZavrsetka = vremeZavrsetka;
         this.vremePocetka = vremePocetka;
+        ucitajIzuzeteDate(putanjaDoIzuzetihDana);
     }
 
     public void ucitajIzuzeteDate(String putanjaFajla){
@@ -204,7 +205,6 @@ public class ImportExport {
         System.out.println("2. Cuvanje rasporeda za određeni period");
         System.out.println("3. Grupisanje po danima u nedelji");
         System.out.println("4. Cuvanje podataka za određeni podatak(npr. za jedan predmet)");
-        System.out.println("\n");
         Scanner sc = new Scanner(System.in);
 
         switch (sc.nextLine()){
@@ -282,7 +282,7 @@ public class ImportExport {
             System.out.println("2. Cuvanje rasporeda za određeni period");
             System.out.println("3. Grupisanje po danima u nedelji");
             System.out.println("4. Cuvanje podataka za određeni podatak(npr. za jedan predmet)");
-            System.out.println("\n");
+
             Scanner sc = new Scanner(System.in);
 
             switch (sc.nextLine()){
@@ -362,7 +362,7 @@ public class ImportExport {
         System.out.println("2. Cuvanje rasporeda za određeni period");
         System.out.println("3. Grupisanje po danima u nedelji");
         System.out.println("4. Cuvanje podataka za određeni podatak(npr. za jedan predmet)");
-        System.out.println("\n");
+
         Scanner sc = new Scanner(System.in);
 
         switch (sc.nextLine()){
@@ -464,5 +464,9 @@ public class ImportExport {
                 System.out.println("Losa komanda je uneta");
         }
 
+    }
+
+    public List<LocalDate> getIzuzetiDani() {
+        return izuzetiDani;
     }
 }

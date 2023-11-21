@@ -8,7 +8,6 @@ public class Manager {
 
     static DodelaTermina obj(){
 
-
         return null;
     }
 

@@ -2,11 +2,15 @@ package klase;
 
 
 import specifikacija.DodelaTermina;
+import specifikacija.ImportExport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -15,13 +19,15 @@ public class Raspored  {
 
    private List<Termin> termini;
 
-   private Date from;
+   private LocalDate from;
 
-   private Date to;
+   private LocalDate to;
 
    private LocalTime hourFrom; //-------> ovo sve oznacava od kad do kad ce trajati raspored
 
    private LocalTime hourTo;
+
+   private List<LocalDate> izuzetiDani;
 
    // promenjen konstruktor rasporeda za inicijalizaciju samog raspored
     // Raspored sada ima od kad i do kad traje kao i od koliko i do koliko sati svakoga dana
@@ -47,10 +53,15 @@ public class Raspored  {
        // 12.10.2023 12.12.2023 8 - 10  00-24h format
        Scanner sc = new Scanner(System.in); //
        String[] datum = sc.nextLine().split(" ");
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.uuuu");
 
-       this.from = new SimpleDateFormat("dd.MM.yyyy").parse(datum[0]);
+       this.from = LocalDate.parse(datum[0],formatter);
 
-       this.to = new SimpleDateFormat("dd.MM.yyyy").parse(datum[1]);
+       this.to = LocalDate.parse(datum[1],formatter);
+
+       //this.from = new SimpleDateFormat("dd.MM.yyyy").parse(datum[0]);
+
+       //this.to = new SimpleDateFormat("dd.MM.yyyy").parse(datum[1]);
 
        this.hourFrom = LocalTime.parse(datum[2]);
 
@@ -75,15 +86,15 @@ public class Raspored  {
     public String toString() {
         return "Raspored{" +
                 "termini=" + termini +
-                '}';
+                '}' +  '\n';
     }
 
 
-    public Date getFrom() {
+    public LocalDate getFrom() {
         return from;
     }
 
-    public Date getTo() {
+    public LocalDate getTo() {
         return to;
     }
 
@@ -101,5 +112,13 @@ public class Raspored  {
 
     public void setHourTo(LocalTime hourTo) {
         this.hourTo = hourTo;
+    }
+
+    public void setIzuzetiDani(List<LocalDate> izuzetiDani) {
+        this.izuzetiDani = izuzetiDani;
+    }
+
+    public List<LocalDate> getIzuzetiDani() {
+        return izuzetiDani;
     }
 }

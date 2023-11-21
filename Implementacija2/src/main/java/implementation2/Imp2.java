@@ -1,5 +1,7 @@
 package implementation2;
 
+import exceptions.DatumUIzuzetomDanuException;
+import exceptions.NeVazeciPeriodException;
 import klase.Manager;
 import klase.Prostorija;
 import klase.Raspored;
@@ -7,6 +9,7 @@ import klase.Termin;
 import specifikacija.DodelaTermina;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,19 +67,20 @@ public class Imp2 implements DodelaTermina {
     public boolean premestajTermina(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r) {
         LocalTime start = pocetakPerioda.toLocalTime();
         LocalTime end = krajPerioda.toLocalTime();
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.uuuu H:mm");
         for (Termin t : r.getTermini()) {
-                if ( t.getPocetakPerioda().isAfter(pocetakPerioda) && t.getKrajPerioda().isBefore(krajPerioda)) {
+                if (t.getPocetakPerioda().isAfter(pocetakPerioda) && t.getKrajPerioda().isBefore(krajPerioda)
+                || (t.getPocetakPerioda().isEqual(pocetakPerioda) && t.getKrajPerioda().isEqual(krajPerioda))) {
                     Scanner sc = new Scanner(System.in);
                     System.out.println("Unesite novi pocetak");
-                    LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine());
+                    LocalDateTime pocetak1 = LocalDateTime.parse(sc.nextLine(),formatter);
                     System.out.println("Unesite novi kraj");
-                    LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine());
-                     t.setPocetakPerioda(pocetak1);
+                    LocalDateTime kraj1 = LocalDateTime.parse(sc.nextLine(),formatter);
+                    t.setPocetakPerioda(pocetak1);
                     t.setKrajPerioda(kraj1);
                     LocalDateTime period = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), start.getHour(), start.getMinute()); // period 23.10.2023 do 24.1.2024
                     LocalDateTime periodDo = LocalDateTime.of(pocetakPerioda.getYear(), pocetakPerioda.getMonthValue(), pocetakPerioda.getDayOfMonth(), end.getHour(), end.getMinute());
-
+                    t.getVremeOdrzavanja().clear();
                     while (periodDo.compareTo(krajPerioda) < 0) {
                         if(period.getDayOfWeek() == day) {
                             t.getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
@@ -84,8 +88,6 @@ public class Imp2 implements DodelaTermina {
                         period = period.plusDays(1);
                         periodDo = periodDo.plusDays(1);
                     }
-
-                    r.getTermini().add(t);
                     System.out.println("Period je uspesno promenjen");
                     return true;
                 }
@@ -195,30 +197,38 @@ public class Imp2 implements DodelaTermina {
 
 
     private void addAdditional(Map<String,String> dodatneStvari,String s){
+        if(!s.isEmpty()) {
+            String[] info = s.split(","); //Znaci string izgleda kao : Profesor:Arsenije Petrovic,Racunar=DA,Predmet="UUP"
 
-        String[] info = s.split(","); //Znaci string izgleda kao : Profesor:Arsenije Petrovic,Racunar=DA,Predmet="UUP"
-
-        String finale = "";
-        int i=0;
-        while(i < info.length){
-            finale = info[i]; // Profesor:Arsenije Petrovic
-            String[] keyValue = finale.split(":");
-            dodatneStvari.put(keyValue[0],keyValue[1]);
-            i++;
+            String finale = "";
+            int i = 0;
+            while (i < info.length) {
+                finale = info[i]; // Profesor:Arsenije Petrovic
+                String[] keyValue = finale.split(":");
+                dodatneStvari.put(keyValue[0], keyValue[1]);
+                i++;
+            }
         }
 
     }
     @Override
-    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p ,String dodatneStvari) {
-        LocalDateTime ltPocetak = LocalDateTime.ofInstant(r.getFrom().toInstant(), ZoneId.systemDefault()); // u rasporedu period od kad do kad vazi
-        LocalDateTime ltKraj = LocalDateTime.ofInstant(r.getTo().toInstant(), ZoneId.systemDefault()); // takodje treba dodati i za sate proveru!
-        LocalTime start = ltPocetak.toLocalTime();
-        LocalTime end = ltKraj.toLocalTime();
+    public boolean kreirajTerminUzPk(DayOfWeek day, LocalDateTime pocetakPerioda, LocalDateTime krajPerioda, Raspored r, Prostorija p ,String dodatneStvari) throws Exception {
+       // LocalDateTime ltPocetak = LocalDateTime.ofInstant(r.getFrom().toInstant(), ZoneId.systemDefault()); // u rasporedu period od kad do kad vazi
+       // LocalDateTime ltKraj = LocalDateTime.ofInstant(r.getTo().toInstant(), ZoneId.systemDefault()); // takodje treba dodati i za sate proveru!
 
-        if (pocetakPerioda.isBefore(ltPocetak) || krajPerioda.isAfter(ltKraj) || (pocetakPerioda.isAfter(ltKraj) || krajPerioda.isBefore(ltPocetak))) { //Od 10.10.2023 Do 1.1.2024  odSati 8-21
+        LocalDate ltPocetak = r.getFrom();
+        LocalDate ltKraj = r.getTo();
+
+        LocalTime start = pocetakPerioda.toLocalTime();
+        LocalTime end = krajPerioda.toLocalTime();
+       // LocalTime start = ltPocetak.toLocalTime();
+        // LocalTime end = ltKraj.toLocalTime();
+
+        if (pocetakPerioda.toLocalDate().isBefore(ltPocetak) || krajPerioda.toLocalDate().isAfter(ltKraj) || (pocetakPerioda.toLocalDate().isAfter(ltKraj) || krajPerioda.toLocalDate().isBefore(ltPocetak))) { //Od 10.10.2023 Do 1.1.2024  odSati 8-21
             //   9.10.2023 Do 1.5.2024
-            System.out.println("PERIOD JE NEVAZECI!!!");
-            return false;
+            //System.out.println("PERIOD JE NEVAZECI!!!");
+            throw new NeVazeciPeriodException();
+
         }
 
         for (Termin t : r.getTermini()) {
@@ -236,6 +246,9 @@ public class Imp2 implements DodelaTermina {
         tP.setKrajPerioda(krajPerioda);
         while (periodDo.compareTo(krajPerioda) < 0) {
             if(period.getDayOfWeek() == day) {
+                if(r.getIzuzetiDani().contains(period.toLocalDate())){
+                    throw new DatumUIzuzetomDanuException();
+                }
                 tP.getVremeOdrzavanja().add(period.toLocalDate()); // 23.12.2023. 8:15 - 23.12.2023 12:00
             }
             period = period.plusDays(1);
