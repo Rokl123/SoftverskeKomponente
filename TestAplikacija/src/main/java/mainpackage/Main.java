@@ -14,8 +14,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String putanjaDoIzuzetihDana = args[0];
-
+        //String putanjaDoIzuzetihDana = args[0];
+        String putanjaDoIzuzetihDana = "izuzetiDatumi.txt";
         Raspored raspored = new Raspored();
         ImportExport ie = new ImportExport(raspored.getHourFrom(),raspored.getHourTo(),putanjaDoIzuzetihDana);
         raspored.setIzuzetiDani(ie.getIzuzetiDani());
@@ -24,7 +24,7 @@ public class Main {
         System.out.println("1. Ucitavanje preko csv:");
         System.out.println("2. Ucitavanje preko json-a:");
 
-        Class.forName("implementation2.Imp2");
+        Class.forName("implementation1.Imp1");
 
             switch (sc.nextLine()) {
                 case "1":

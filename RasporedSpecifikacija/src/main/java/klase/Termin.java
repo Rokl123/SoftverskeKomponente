@@ -2,6 +2,7 @@ package klase;
 
 import com.google.gson.annotations.Expose;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,6 +23,8 @@ public class Termin {
     private Prostorija prostorija;
     @Expose
     private Map<String,String> dodatneStvari;
+    @Expose
+    private DayOfWeek day;
 
     public Termin(LocalDateTime pocetak, int trajanje, Prostorija prostorija) {
         this.pocetakPerioda = pocetak;
@@ -63,6 +66,18 @@ public class Termin {
         this.vremeOdrzavanja = vremeOdrzavanja;
     }
 
+    public void odradiVremeOdrzavanja(){
+        LocalDateTime odrzavanje = pocetakPerioda;
+        LocalDateTime krajOdrzavanja = krajPerioda;
+        if(!pocetakPerioda.isEqual(krajPerioda)) {
+            while (odrzavanje.isBefore(krajOdrzavanja)) {
+                if(odrzavanje.getDayOfWeek() == this.day)
+                this.vremeOdrzavanja.add(odrzavanje.toLocalDate());
+
+                odrzavanje = odrzavanje.plusDays(1);
+            }
+        }
+    }
 
 
 
@@ -101,7 +116,14 @@ public class Termin {
     public void setDodatneStvari(Map<String, String> dodatneStvari) {
         this.dodatneStvari = dodatneStvari;
     }
-    
+
+    public DayOfWeek getDay() {
+        return day;
+    }
+
+    public void setDay(DayOfWeek day) {
+        this.day = day;
+    }
 
     @Override
     public String toString() {

@@ -145,9 +145,24 @@ public class ImportExport {
                     case "end":
                         LocalDateTime endDateTime = LocalDateTime.parse(record.get(columnIndex), formatter);
                         termin.setKrajPerioda(endDateTime);
+                        termin.odradiVremeOdrzavanja();
                         break;
                     case "additional":
                         termin.getDodatneStvari().put(columnName, record.get(columnIndex));
+                        break;
+                    case "day":
+                        if(record.get(columnIndex).equals("PON"))
+                        termin.setDay(DayOfWeek.MONDAY);
+                        if(record.get(columnIndex).equals("UTO"))
+                            termin.setDay(DayOfWeek.TUESDAY);
+                        if(record.get(columnIndex).equals("SRE"))
+                            termin.setDay(DayOfWeek.WEDNESDAY);
+                        if(record.get(columnIndex).equals("CET"))
+                            termin.setDay(DayOfWeek.THURSDAY);
+                        if(record.get(columnIndex).equals("PET"))
+                            termin.setDay(DayOfWeek.FRIDAY);
+                        if(record.get(columnIndex).equals("SUB"))
+                            termin.setDay(DayOfWeek.SATURDAY);
                         break;
                 }
             }

@@ -50,14 +50,17 @@ public class Imp2 implements DodelaTermina {
 
     @Override
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
-        for(Termin t:raspored.getTermini()){
-                if(t.getPocetakPerioda().toLocalDate().isAfter(pocetak.toLocalDate()) && t.getKrajPerioda().toLocalDate().isBefore(kraj.toLocalDate())
-                || (t.getPocetakPerioda().toLocalDate().isEqual(pocetak.toLocalDate()) && t.getKrajPerioda().toLocalDate().isEqual(kraj.toLocalDate()))){
+        int brojac=0;
+        for(int i=0;i<raspored.getTermini().size();i++) {
+            Termin t = raspored.getTermini().get(i);
+                if (t.getPocetakPerioda().toLocalDate().isAfter(pocetak.toLocalDate()) && t.getKrajPerioda().toLocalDate().isBefore(kraj.toLocalDate())
+                        || (t.getPocetakPerioda().toLocalDate().isEqual(pocetak.toLocalDate()) && t.getKrajPerioda().toLocalDate().isEqual(kraj.toLocalDate()))) {
                     raspored.getTermini().remove(t);
-                    System.out.println("Period je uspesno obrisan");
-                    return true;
+                    brojac++;
                 }
         }
+        if(brojac>0)
+            return true;
         System.out.println("Period nije obrisan");
         return false;
     }

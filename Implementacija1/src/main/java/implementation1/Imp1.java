@@ -90,13 +90,17 @@ public class Imp1 implements DodelaTermina {
 
     @Override
     public boolean brisanjeTermina(LocalDateTime pocetak, LocalDateTime kraj, Raspored raspored) {
-        for(Termin t:raspored.getTermini()){
+        int brojac=0;
+        for(int i=0;i<raspored.getTermini().size();i++){
+            Termin t = raspored.getTermini().get(i);
             if(preklapanjeTermina(pocetak,kraj,t.getPocetakPerioda(),t.getKrajPerioda())){
                 raspored.getTermini().remove(t);
-                System.out.println("Termin je uspesno obrisan");
-                return true;
+                System.out.println("Termin" + t + " je uspesno obrisan");
+                brojac++;
             }
         }
+        if(brojac>0)
+            return true;
         System.out.println("Termin nije obrisan");
         return false;
     }
